@@ -1,0 +1,162 @@
+src/components/common/action-card.styles.ts(13,25): error TS2339: Property 'black' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/components/common/card.styles.ts(9,25): error TS2339: Property 'black' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/components/forms/Dropdown.tsx(49,6): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Dropdown.tsx(73,10): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Dropdown.tsx(116,11): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Dropdown.tsx(119,7): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/HelperText.tsx(5,18): error TS2430: Interface 'HelperTextProps' incorrectly extends interface 'TextProps'.
+  Types of property 'style' are incompatible.
+    Type 'StyleProp<ViewStyle>' is not assignable to type 'StyleProp<TextStyle>'.
+      Type 'ViewStyle' is not assignable to type 'StyleProp<TextStyle>'.
+        Type 'ViewStyle' is not assignable to type 'TextStyle'.
+          Types of property 'userSelect' are incompatible.
+            Type 'string | undefined' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+              Type 'string' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+src/components/forms/Input.tsx(87,10): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(94,12): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(95,26): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(95,92): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(107,69): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: TextInputProps): TextInput', gave the following error.
+    Object literal may only specify known properties, and 'invalid' does not exist in type 'AccessibilityState'.
+  Overload 2 of 2, '(props: TextInputProps, context: any): TextInput', gave the following error.
+    Object literal may only specify known properties, and 'invalid' does not exist in type 'AccessibilityState'.
+src/components/forms/Input.tsx(117,16): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(117,82): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(119,13): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/Input.tsx(121,11): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/OTPInput.tsx(6,18): error TS2430: Interface 'OTPInputProps' incorrectly extends interface 'TextInputProps'.
+  Types of property 'onChange' are incompatible.
+    Type '(value: string) => void' is not assignable to type '(e: TextInputChangeEvent) => void'.
+      Types of parameters 'value' and 'e' are incompatible.
+        Type 'TextInputChangeEvent' is not assignable to type 'string'.
+src/components/forms/OTPInput.tsx(71,8): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/OTPInput.tsx(72,10): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/OTPInput.tsx(74,14): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/OTPInput.tsx(93,15): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/OTPInput.tsx(95,11): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/OTPInput.tsx(116,9): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/PasswordInput.tsx(7,18): error TS2430: Interface 'PasswordInputProps' incorrectly extends interface 'TextInputProps'.
+  Types of property 'style' are incompatible.
+    Type 'StyleProp<ViewStyle>' is not assignable to type 'StyleProp<TextStyle>'.
+      Type 'ViewStyle' is not assignable to type 'StyleProp<TextStyle>'.
+        Type 'ViewStyle' is not assignable to type 'TextStyle'.
+          Types of property 'userSelect' are incompatible.
+            Type 'string | undefined' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+              Type 'string' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+src/components/forms/PasswordInput.tsx(27,8): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/PasswordInput.tsx(29,10): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/PasswordInput.tsx(40,24): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/PasswordInput.tsx(40,77): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/PasswordInput.tsx(60,11): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/PasswordInput.tsx(63,9): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/SearchBar.tsx(6,18): error TS2430: Interface 'SearchBarProps' incorrectly extends interface 'TextInputProps'.
+  Types of property 'style' are incompatible.
+    Type 'StyleProp<ViewStyle>' is not assignable to type 'StyleProp<TextStyle>'.
+      Type 'ViewStyle' is not assignable to type 'StyleProp<TextStyle>'.
+        Type 'ViewStyle' is not assignable to type 'TextStyle'.
+          Types of property 'userSelect' are incompatible.
+            Type 'string | undefined' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+              Type 'string' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+src/components/forms/SearchBar.tsx(21,8): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/SearchBar.tsx(22,10): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/SearchBar.tsx(62,11): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/SearchBar.tsx(63,26): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/SearchBar.tsx(63,82): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/SearchBar.tsx(64,9): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/TextArea.tsx(34,10): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/forms/TextArea.tsx(61,11): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/ChatHeader.tsx(2,41): error TS2300: Duplicate identifier 'View'.
+src/components/headers/ChatHeader.tsx(2,47): error TS2300: Duplicate identifier 'View'.
+src/components/headers/ChatHeader.tsx(47,12): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/ChatHeader.tsx(54,13): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/DashboardHeader.tsx(2,41): error TS2300: Duplicate identifier 'View'.
+src/components/headers/DashboardHeader.tsx(2,47): error TS2300: Duplicate identifier 'View'.
+src/components/headers/DashboardHeader.tsx(53,12): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/DashboardHeader.tsx(53,69): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/MessagesHeader.tsx(2,15): error TS2300: Duplicate identifier 'View'.
+src/components/headers/MessagesHeader.tsx(2,21): error TS2300: Duplicate identifier 'View'.
+src/components/headers/MessagesHeader.tsx(23,12): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/MessagesHeader.tsx(25,13): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/MessagesHeader.tsx(29,22): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/MessagesHeader.tsx(29,75): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/headers/ProfileHeader.tsx(2,15): error TS2300: Duplicate identifier 'View'.
+src/components/headers/ProfileHeader.tsx(2,21): error TS2300: Duplicate identifier 'View'.
+src/components/headers/RequestsHeader.tsx(2,15): error TS2300: Duplicate identifier 'View'.
+src/components/headers/RequestsHeader.tsx(2,21): error TS2300: Duplicate identifier 'View'.
+src/components/headers/RequestsHeader.tsx(11,13): error TS2304: Cannot find name 'SharedValue'.
+src/components/headers/WalletHeader.tsx(2,15): error TS2300: Duplicate identifier 'View'.
+src/components/headers/WalletHeader.tsx(2,21): error TS2300: Duplicate identifier 'View'.
+src/components/headers/WalletHeader.tsx(11,13): error TS2304: Cannot find name 'SharedValue'.
+src/components/headers/WaveHeader.tsx(98,63): error TS2339: Property 'surface' does not exist on type '{ readonly text: "#000000"; readonly background: "#ffffff"; readonly backgroundElement: "#F0F0F3"; readonly backgroundSelected: "#E0E1E6"; readonly textSecondary: "#60646C"; } | { ...; }'.
+  Property 'surface' does not exist on type '{ readonly text: "#000000"; readonly background: "#ffffff"; readonly backgroundElement: "#F0F0F3"; readonly backgroundSelected: "#E0E1E6"; readonly textSecondary: "#60646C"; }'.
+src/components/headers/WaveHeader.tsx(108,18): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/components/headers/WaveHeader.tsx(108,18): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/components/headers/WaveHeader.tsx(109,34): error TS2339: Property 'overlay' does not exist on type '{ readonly text: "#000000"; readonly background: "#ffffff"; readonly backgroundElement: "#F0F0F3"; readonly backgroundSelected: "#E0E1E6"; readonly textSecondary: "#60646C"; } | { ...; }'.
+  Property 'overlay' does not exist on type '{ readonly text: "#000000"; readonly background: "#ffffff"; readonly backgroundElement: "#F0F0F3"; readonly backgroundSelected: "#E0E1E6"; readonly textSecondary: "#60646C"; }'.
+src/components/headers/WaveHeader.tsx(110,42): error TS2551: Property 'absoluteFillObject' does not exist on type 'typeof StyleSheet'. Did you mean 'absoluteFill'?
+src/components/headers/WaveHeader.tsx(123,96): error TS2339: Property 'surface' does not exist on type '{ readonly text: "#000000"; readonly background: "#ffffff"; readonly backgroundElement: "#F0F0F3"; readonly backgroundSelected: "#E0E1E6"; readonly textSecondary: "#60646C"; } | { ...; }'.
+  Property 'surface' does not exist on type '{ readonly text: "#000000"; readonly background: "#ffffff"; readonly backgroundElement: "#F0F0F3"; readonly backgroundSelected: "#E0E1E6"; readonly textSecondary: "#60646C"; }'.
+src/components/ui/Badge.tsx(5,18): error TS2430: Interface 'BadgeProps' incorrectly extends interface 'TextProps'.
+  Types of property 'style' are incompatible.
+    Type 'StyleProp<ViewStyle>' is not assignable to type 'StyleProp<TextStyle>'.
+      Type 'ViewStyle' is not assignable to type 'StyleProp<TextStyle>'.
+        Type 'ViewStyle' is not assignable to type 'TextStyle'.
+          Types of property 'userSelect' are incompatible.
+            Type 'string | undefined' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+              Type 'string' is not assignable to type '"auto" | "none" | "contain" | "text" | "all" | undefined'.
+src/components/ui/Badge.tsx(60,6): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/ui/Badge.tsx(85,7): error TS1361: 'View' cannot be used as a value because it was imported using 'import type'.
+src/components/ui/button.tsx(26,68): error TS2339: Property 'white' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/components/ui/input.styles.ts(11,29): error TS2339: Property 'white' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/features/auth/screens/sign-in.tsx(206,60): error TS2322: Type '"/(auth)/forgot-password"' is not assignable to type 'RelativePathString | ExternalPathString | "/chat" | "/" | "/messages" | "/notifications" | "/_sitemap" | "/(auth)/email-verification" | ... 64 more ... | "/withdrawals"'.
+src/features/auth/styles/splash.styles.ts(13,19): error TS2551: Property 'absoluteFillObject' does not exist on type 'typeof StyleSheet'. Did you mean 'absoluteFill'?
+src/features/bookings/components/BookingHeader.styles.ts(13,19): error TS2551: Property 'absoluteFillObject' does not exist on type 'typeof StyleSheet'. Did you mean 'absoluteFill'?
+src/features/chat/styles/chat.styles.ts(33,29): error TS2339: Property 'primarySoft' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/features/chat/styles/chat.styles.ts(41,25): error TS2339: Property 'shadow' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/features/chat/styles/chat.styles.ts(58,19): error TS2339: Property 'textPrimary' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/features/notifications/screens/notifications.tsx(150,18): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/features/notifications/screens/notifications.tsx(150,18): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/features/student/screens/dashboard.tsx(55,99): error TS2345: Argument of type '"/(student)/messages"' is not assignable to parameter of type 'RelativePathString | ExternalPathString | "/chat" | `/chat?${string}` | `/chat#${string}` | "/" | `/?${string}` | `/#${string}` | "/messages" | `/messages?${string}` | `/messages#${string}` | ... 245 more ... | { ...; }'.
+src/features/student/screens/dashboard.tsx(70,10): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/features/student/screens/dashboard.tsx(70,10): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/features/student/screens/dashboard.tsx(125,23): error TS2304: Cannot find name 'useCallback'.
+src/features/student/screens/dashboard.tsx(126,14): error TS7031: Binding element 'tutor' implicitly has an 'any' type.
+src/features/student/screens/dashboard.tsx(155,22): error TS2322: Type '"variant"' is not assignable to type '"body" | "title" | "subtitle" | "display" | "caption" | "h1" | "h2" | "h3" | "label" | "bodySmall" | undefined'.
+src/features/student/screens/profile.tsx(35,12): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/features/student/screens/profile.tsx(35,12): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/features/student/screens/tutor-detail.tsx(90,18): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/features/student/screens/tutor-detail.tsx(90,18): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/features/student/screens/tutor-detail.tsx(98,77): error TS2339: Property 'location' does not exist on type 'TutorProfile'.
+src/features/tutor/components/requests/RequestCard.tsx(86,12): error TS2741: Property 'title' is missing in type '{ children: string; onPress: () => void; style: { flex: number; }; accessibilityLabel: string; }' but required in type 'SecondaryButtonProps'.
+src/features/tutor/components/requests/RequestCard.tsx(89,12): error TS2741: Property 'title' is missing in type '{ children: string; onPress: () => void; style: { flex: number; }; accessibilityLabel: string; }' but required in type 'PrimaryButtonProps'.
+src/features/tutor/components/requests/RequestsList.tsx(16,77): error TS2322: Type '{ request: TutorRequest; onAccept: (id: string) => void; onDecline: (id: string) => void; index: number; }' is not assignable to type 'IntrinsicAttributes & RequestCardProps'.
+  Property 'index' does not exist on type 'IntrinsicAttributes & RequestCardProps'.
+src/features/tutor/navigation/TutorLayout.tsx(18,35): error TS2339: Property 'white' does not exist on type '{ readonly primary: "#22C7F0"; readonly primaryDark: "#1A9EC5"; readonly primaryLight: "#D9F9FF"; readonly secondary: "#6366F1"; readonly secondaryDark: "#4F46E5"; readonly success: "#10B981"; ... 15 more ...; readonly transparent: "transparent"; }'.
+src/features/tutor/screens/availability.tsx(70,8): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/features/tutor/screens/availability.tsx(70,8): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/features/tutor/screens/dashboard.tsx(208,22): error TS2604: JSX element type 'LinearGradient' does not have any construct or call signatures.
+src/features/tutor/screens/dashboard.tsx(208,22): error TS2786: 'LinearGradient' cannot be used as a JSX component.
+  Its type 'typeof import("C:/Users/cw_23/Tutor-Konnect/frontend/node_modules/expo-linear-gradient/build/LinearGradient")' is not a valid JSX element type.
+src/features/tutor/screens/dashboard.tsx(296,24): error TS2741: Property 'title' is missing in type '{ children: string; onPress: () => void; }' but required in type 'SecondaryButtonProps'.
+src/features/tutor/screens/dashboard.tsx(306,30): error TS2741: Property 'title' is missing in type '{ children: string; onPress: () => void; }' but required in type 'PrimaryButtonProps'.
+src/features/tutor/screens/dashboard.tsx(325,24): error TS2741: Property 'title' is missing in type '{ children: string; onPress: () => void; }' but required in type 'SecondaryButtonProps'.
+src/features/tutor/screens/dashboard.tsx(348,24): error TS2741: Property 'title' is missing in type '{ children: string; onPress: () => void; }' but required in type 'SecondaryButtonProps'.
+src/features/tutor/screens/dashboard.tsx(381,43): error TS2339: Property 'id' does not exist on type 'never'.
+src/features/tutor/screens/dashboard.tsx(384,61): error TS2339: Property 'subject' does not exist on type 'never'.
+src/features/tutor/screens/dashboard.tsx(385,86): error TS2339: Property 'status' does not exist on type 'never'.
+src/features/tutor/screens/requests.tsx(103,77): error TS2322: Type '{ request: TutorRequest; onAccept: (id: string) => Promise<void>; onDecline: (id: string) => Promise<void>; index: number; }' is not assignable to type 'IntrinsicAttributes & RequestCardProps'.
+  Property 'index' does not exist on type 'IntrinsicAttributes & RequestCardProps'.
+src/features/tutor/screens/settings.tsx(19,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.
+src/features/tutor/screens/settings.tsx(20,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.
+src/features/tutor/screens/settings.tsx(21,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.
+src/features/tutor/screens/settings.tsx(22,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.
+src/features/tutor/screens/settings.tsx(23,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.
+src/features/tutor/screens/settings.tsx(24,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.
+src/features/tutor/screens/settings.tsx(25,3): error TS2741: Property 'label' is missing in type '{ id: string; title: string; icon: string; route: string; }' but required in type 'SettingItemExtended'.

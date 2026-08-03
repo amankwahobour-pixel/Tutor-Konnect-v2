@@ -1,0 +1,9 @@
+export { WaveHeader } from './WaveHeader';
+export { DashboardHeader } from './DashboardHeader';
+export { MessagesHeader } from './MessagesHeader';
+export { RequestsHeader } from './RequestsHeader';
+export { ChatHeader } from './ChatHeader';
+export { WalletHeader } from './WalletHeader';
+export { ProfileHeader } from './ProfileHeader';
+export { SettingsHeader } from './SettingsHeader';
+export { NotificationHeader } from './NotificationHeader';

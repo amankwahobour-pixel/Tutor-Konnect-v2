@@ -1,0 +1,2 @@
+// Chat feature barrel
+export {};

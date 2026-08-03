@@ -1,0 +1,55 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=production node dist/app.js",
+    "dev": "cross-env NODE_ENV=development nodemon --exec ts-node src/app.ts",
+    "test": "cross-env NODE_ENV=test node dist/app.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "typeorm migration:run",
+    "migration:revert": "typeorm migration:revert",
+    "release": "standard-version",
+    "lint": "eslint . --ext .ts --format stylish",
+    "lint:fix": "eslint . --ext .ts --fix"
+  },
+  "dependencies": {
+    "@supabase/storage-js": "^2.107.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "@types/winston": "^2.4.4",
+    "body-parser": "^2.2.2",
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "pg": "^8.21.0",
+    "postgres": "^3.4.9",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.0",
+    "typeorm-naming-strategies": "^4.1.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "winston-logger": "^1.0.1",
+    "ws": "^8.21.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.9.1",
+    "@types/ws": "^8.18.1",
+    "cross-env": "^10.1.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "private": true
+}
