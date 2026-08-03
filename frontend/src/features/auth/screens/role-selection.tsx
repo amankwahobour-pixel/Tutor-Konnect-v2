@@ -12,7 +12,7 @@ import { styles } from '../styles/role-selection.styles';
 import { colors } from '@/theme';
 
 export default function RoleSelectionScreen() {
-  const [selectedRole, setSelectedRole] = useState<'student' | 'tutor' | null>(null);
+  const [selectedRole, setSelectedRole] = useState<'student' | 'tutor' | 'parent' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser } = useAuthContext();
 
@@ -34,7 +34,10 @@ export default function RoleSelectionScreen() {
         const existing = await getUserProfile(user.id);
         if (existing?.data) {
           setUser(existing.data);
-          router.replace(existing.data.role === 'tutor' ? '/(tutor)/dashboard' : '/(student)/dashboard');
+          const role = existing.data.role;
+          if (role === 'tutor') router.replace('/(tutor)/dashboard');
+          else if (role === 'parent') router.replace('/(parent)/dashboard');
+          else router.replace('/(student)/dashboard');
           return;
         }
       } catch {}
@@ -47,7 +50,7 @@ export default function RoleSelectionScreen() {
         return;
       }
 
-      const profilePayload: Partial<UserProfile> & { role: 'student' | 'tutor' } = {
+      const profilePayload: Partial<UserProfile> & { role: 'student' | 'tutor' | 'parent' } = {
         id: user.id,
         full_name: user.full_name,
         phone_number: user.phone_number,
@@ -65,7 +68,10 @@ export default function RoleSelectionScreen() {
           return;
         }
 
-        router.replace(created.data.role === 'tutor' ? '/(tutor)/dashboard' : '/(student)/dashboard');
+        const role = created.data.role;
+        if (role === 'tutor') router.replace('/(tutor)/dashboard');
+        else if (role === 'parent') router.replace('/(parent)/dashboard');
+        else router.replace('/(student)/dashboard');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save role';
@@ -75,7 +81,7 @@ export default function RoleSelectionScreen() {
     }
   };
 
-  const handleDevShortcut = (route: '/(student)/dashboard' | '/(tutor)/dashboard', role: 'student' | 'tutor') => {
+  const handleDevShortcut = (route: '/(student)/dashboard' | '/(tutor)/dashboard' | '/(parent)/dashboard', role: 'student' | 'tutor' | 'parent') => {
     if (!user) {
       Alert.alert('Developer Shortcut', 'No user is signed in. Please sign in first.');
       return;
@@ -129,6 +135,23 @@ export default function RoleSelectionScreen() {
             </View>
             {selectedRole === 'tutor' ? <View style={styles.checkmark}><Ionicons name="checkmark" size={16} color={colors.surface} /></View> : null}
           </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={[styles.roleCard, selectedRole === 'parent' && styles.selectedCard]}
+            onPress={() => setSelectedRole('parent')}
+            disabled={isLoading}
+            accessibilityRole="button"
+            accessibilityLabel="Select Parent role"
+            accessibilityState={{ selected: selectedRole === 'parent' }}
+          >
+            <View style={styles.iconCircle}><Ionicons name="people-outline" size={24} color={colors.primary} /></View>
+            <View style={styles.cardText}>
+              <AppText variant="subtitle" style={styles.cardTitle}>Parent</AppText>
+              <AppText variant="bodySmall" style={styles.cardDescription}>Monitor your child's progress, lessons, and stay connected with their tutors.</AppText>
+            </View>
+            {selectedRole === 'parent' ? <View style={styles.checkmark}><Ionicons name="checkmark" size={16} color={colors.surface} /></View> : null}
+          </TouchableOpacity>
         </BaseCard>
 
         <PrimaryButton title={isLoading ? 'Saving…' : 'Continue'} onPress={handleContinue} disabled={!selectedRole || isLoading} containerStyle={styles.button} />
@@ -139,6 +162,7 @@ export default function RoleSelectionScreen() {
             <View style={styles.devRow}>
               <SecondaryButton title="Student" onPress={() => handleDevShortcut('/(student)/dashboard', 'student')} containerStyle={styles.devButton} />
               <SecondaryButton title="Tutor" onPress={() => handleDevShortcut('/(tutor)/dashboard', 'tutor')} containerStyle={styles.devButton} />
+              <SecondaryButton title="Parent" onPress={() => handleDevShortcut('/(parent)/dashboard', 'parent')} containerStyle={styles.devButton} />
             </View>
           </View>
         ) : null}

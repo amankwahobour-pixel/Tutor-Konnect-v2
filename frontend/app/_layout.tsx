@@ -22,6 +22,9 @@ export default function RootLayout() {
 
         {/* Tutor Flow */}
         <Stack.Screen name="(tutor)" />
+
+        {/* Parent Flow */}
+        <Stack.Screen name="(parent)" />
       </Stack>
       </BookingSyncProvider>
     </AuthProvider>

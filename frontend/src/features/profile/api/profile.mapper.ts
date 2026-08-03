@@ -6,7 +6,7 @@ export interface CreateProfileRequest {
   fullName: string;
   phoneNumber: string;
   profilePhoto?: string;
-  role: 'student' | 'tutor';
+  role: 'student' | 'tutor' | 'parent';
   bio?: string;
 }
 
@@ -19,7 +19,7 @@ export interface UpdateProfileRequest {
 }
 
 // Mapper: frontend (snake_case UserProfile) -> backend DTO (camelCase)
-export function toCreateProfileRequest(profile: Partial<UserProfile> & { role: 'student' | 'tutor' }): CreateProfileRequest {
+export function toCreateProfileRequest(profile: Partial<UserProfile> & { role: 'student' | 'tutor' | 'parent' }): CreateProfileRequest {
   if (!profile.id) throw new Error('Missing id for create profile request');
   if (!profile.role) throw new Error('Missing role for create profile request');
 

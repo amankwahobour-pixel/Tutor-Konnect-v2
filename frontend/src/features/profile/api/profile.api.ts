@@ -124,7 +124,7 @@ export async function getAllProfiles(options?: ApiRequestOptions) {
   } as ProfileListResponse;
 }
 
-export async function createProfile(profile: Partial<UserProfile> & { role: 'student' | 'tutor' }, options?: ApiRequestOptions) {
+export async function createProfile(profile: Partial<UserProfile> & { role: 'student' | 'tutor' | 'parent' }, options?: ApiRequestOptions) {
   // Convert frontend snake_case profile to backend DTO (camelCase)
   const dto: CreateProfileRequest = toCreateProfileRequest(profile);
   const res = await apiFetch<ProfileResponse>('/profiles', {
