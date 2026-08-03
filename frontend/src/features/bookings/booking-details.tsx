@@ -184,7 +184,7 @@ export default function BookingDetailsScreen() {
                   </View>
                   <View style={styles.infoRow}>
                     <Ionicons name="create-outline" size={18} color={colors.primary} />
-                    <AppText variant="body" style={styles.infoText}>Created: {booking.created_at}</AppText>
+                    <AppText variant="body" style={styles.infoText}>Created: {booking.created_at ? new Date(booking.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }) : '—'}</AppText>
                   </View>
                 </BaseCard>
 

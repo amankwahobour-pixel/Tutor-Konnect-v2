@@ -1,4 +1,3 @@
-export { OTPInput } from './OTPInput';
-export { RoleCard } from './RoleCard';
-export { OnboardingSlide } from './OnboardingSlide';
-export { PaginationDots } from './PaginationDots';
+// Auth components - currently no standalone auth components
+// (OTPInput, OnboardingSlide, PaginationDots, RoleCard were removed as dead code)
+export {};

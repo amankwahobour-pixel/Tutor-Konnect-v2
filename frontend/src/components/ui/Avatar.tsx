@@ -65,16 +65,15 @@ function AvatarComponent({
             height: containerSize,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: colors.background,
+            backgroundColor: colors.primaryLight,
           }}
         >
           <Text
             style={[
               {
-                color: colors.textSecondary,
+                color: colors.primaryDark,
                 fontSize: textSize,
                 fontWeight: '700',
-                fontFamily: typography.label ? undefined : undefined,
               },
               textStyle,
             ]}

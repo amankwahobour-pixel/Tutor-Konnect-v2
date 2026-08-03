@@ -8,17 +8,17 @@ export interface AppTextProps extends TextProps {
   style?: StyleProp<TextStyle>;
 }
 
-const variantStyles: Record<NonNullable<AppTextProps['variant']>, { fontSize: number; fontWeight?: TextStyle['fontWeight'] }> = {
-  display: { fontSize: typography.display, fontWeight: '700' },
-  h1: { fontSize: typography.h1, fontWeight: '700' },
-  h2: { fontSize: typography.h2, fontWeight: '700' },
-  h3: { fontSize: typography.h3, fontWeight: '700' },
-  title: { fontSize: typography.title, fontWeight: '700' },
-  subtitle: { fontSize: typography.subtitle, fontWeight: '500' },
-  body: { fontSize: typography.body, fontWeight: '400' },
-  bodySmall: { fontSize: typography.bodySmall, fontWeight: '400' },
-  caption: { fontSize: typography.caption, fontWeight: '400' },
-  label: { fontSize: typography.label, fontWeight: '600' },
+const variantStyles: Record<NonNullable<AppTextProps['variant']>, { fontSize: number; fontWeight: TextStyle['fontWeight']; lineHeight: number }> = {
+  display: { fontSize: typography.display, fontWeight: typography.weight.bold, lineHeight: typography.lineHeight.display },
+  h1: { fontSize: typography.h1, fontWeight: typography.weight.bold, lineHeight: typography.lineHeight.h1 },
+  h2: { fontSize: typography.h2, fontWeight: typography.weight.bold, lineHeight: typography.lineHeight.h2 },
+  h3: { fontSize: typography.h3, fontWeight: typography.weight.bold, lineHeight: typography.lineHeight.h3 },
+  title: { fontSize: typography.title, fontWeight: typography.weight.bold, lineHeight: typography.lineHeight.title },
+  subtitle: { fontSize: typography.subtitle, fontWeight: typography.weight.medium, lineHeight: typography.lineHeight.subtitle },
+  body: { fontSize: typography.body, fontWeight: typography.weight.regular, lineHeight: typography.lineHeight.body },
+  bodySmall: { fontSize: typography.bodySmall, fontWeight: typography.weight.regular, lineHeight: typography.lineHeight.bodySmall },
+  caption: { fontSize: typography.caption, fontWeight: typography.weight.regular, lineHeight: typography.lineHeight.caption },
+  label: { fontSize: typography.label, fontWeight: typography.weight.semibold, lineHeight: typography.lineHeight.label },
 };
 
 const AppTextComponent = React.forwardRef<React.ElementRef<typeof Text>, AppTextProps>(function AppTextComponent(

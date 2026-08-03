@@ -203,7 +203,7 @@ export default function SigninScreen() {
           <PrimaryButton title={loading ? 'Signing in…' : authMode === 'phone' ? 'Continue' : 'Sign in'} loading={loading} onPress={authMode === 'phone' ? handlePhoneContinue : handleEmailContinue} containerStyle={styles.button} />
 
           <View style={styles.linksRow}>
-            <TouchableOpacity onPress={() => router.push('/(auth)/sign-in')} disabled={loading}>
+            <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')} disabled={loading}>
               <AppText variant="bodySmall" style={styles.linkText}>Forgot password?</AppText>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')} disabled={loading}>

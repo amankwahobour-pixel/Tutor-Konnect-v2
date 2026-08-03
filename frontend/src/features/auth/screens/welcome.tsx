@@ -39,11 +39,10 @@ export default function WelcomeScreen() {
   const [fadeAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
+    Animated.sequence([
+      Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 350, useNativeDriver: true }),
+    ]).start();
   }, [currentIndex, fadeAnim]);
 
   const handleNext = async () => {
@@ -52,7 +51,6 @@ export default function WelcomeScreen() {
     if (nextIndex < onboardingData.length) {
       scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true });
       setCurrentIndex(nextIndex);
-      Animated.timing(fadeAnim, { toValue: 1, duration: 220, useNativeDriver: true }).start();
     } else {
       try {
         const { saveOnboardingComplete } = await import('@/features/auth/services/auth-storage');
@@ -104,7 +102,7 @@ export default function WelcomeScreen() {
         contentContainerStyle={{ width: width * onboardingData.length }}
       >
         {onboardingData.map((item) => (
-          <Animated.View key={item.id} style={[styles.slide, { width }, { opacity: fadeAnim }]}> 
+          <Animated.View key={item.id} style={[styles.slide, { width }, { opacity: fadeAnim }]}>
             <Image source={item.image} style={styles.image} resizeMode="contain" />
             <AppText variant="h2" style={styles.title}>{item.title}</AppText>
             <AppText variant="body" style={styles.description}>{item.description}</AppText>

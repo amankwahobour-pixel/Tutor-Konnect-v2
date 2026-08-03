@@ -145,7 +145,7 @@ export default function StudentDashboard() {
         <View style={styles.tutorMetaRow}>
           <View style={styles.metaChip}>
             <Ionicons name="star-outline" size={14} color={colors.warning} />
-            <AppText variant="caption" style={styles.metaText}>4.8</AppText>
+            <AppText variant="caption" style={styles.metaText}>{tutor.rating_avg ? tutor.rating_avg.toFixed(1) : 'New'}</AppText>
           </View>
           <View style={styles.metaChip}>
             <Ionicons name="location-outline" size={14} color={colors.primary} />

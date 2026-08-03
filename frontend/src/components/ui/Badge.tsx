@@ -11,21 +11,21 @@ export interface BadgeProps extends Omit<TextProps, 'style'> {
 }
 
 const badgeBackgrounds: Record<NonNullable<BadgeProps['variant']>, string> = {
-  primary: colors.primary,
-  secondary: colors.secondary,
-  success: colors.success,
-  warning: colors.warning,
-  danger: colors.danger,
-  neutral: colors.surface,
+  primary: colors.primaryLight,
+  secondary: colors.secondaryLight,
+  success: colors.successLight,
+  warning: colors.warningLight,
+  danger: colors.dangerLight,
+  neutral: colors.surfaceVariant,
 };
 
 const badgeTextColors: Record<NonNullable<BadgeProps['variant']>, string> = {
-  primary: colors.surface,
-  secondary: colors.surface,
-  success: colors.surface,
-  warning: colors.text,
-  danger: colors.surface,
-  neutral: colors.text,
+  primary: colors.primaryDark,
+  secondary: colors.secondaryDark,
+  success: colors.success,
+  warning: '#B45309',
+  danger: colors.danger,
+  neutral: colors.textSecondary,
 };
 
 const badgeSizes = {
@@ -35,13 +35,13 @@ const badgeSizes = {
     fontSize: typography.caption,
   },
   medium: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    paddingHorizontal: spacing.sm + 2,
     fontSize: typography.bodySmall,
   },
   large: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     fontSize: typography.body,
   },
 } as const;
@@ -74,7 +74,8 @@ function BadgeComponent({
           {
             color: badgeTextColors[variant],
             fontSize: badgeSize.fontSize,
-            fontWeight: '600',
+            fontWeight: typography.weight.semibold,
+            lineHeight: badgeSize.fontSize * 1.3,
           },
           textStyle,
         ]}

@@ -52,9 +52,9 @@ function BaseCardComponent({
     () => [
       {
         backgroundColor: colors.surface,
-        borderRadius: radius.lg,
+        borderRadius: radius.xl,
         padding: spacing.lg,
-        borderWidth: outlined ? 1 : 0,
+        borderWidth: outlined ? 1.5 : 0,
         borderColor: outlined ? colors.border : 'transparent',
         ...elevationMap[elevation],
       },

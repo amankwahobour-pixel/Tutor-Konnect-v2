@@ -1,2 +1,0 @@
-// Parent feature barrel
-export {};

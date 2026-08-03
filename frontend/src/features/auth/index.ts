@@ -1,5 +1,4 @@
 // Auth feature exports
-export { OnboardingSlide, OTPInput, PaginationDots, RoleCard } from './components';
 export { useAuth } from './hooks/use-auth';
 export { getAuthToken, getAuthUser, removeAuthToken, saveAuthToken, saveAuthUser } from './services/auth-storage';
 export {
@@ -10,4 +9,3 @@ export {
     type LoginPayload
 } from './services/auth.service';
 export * from './types';
-

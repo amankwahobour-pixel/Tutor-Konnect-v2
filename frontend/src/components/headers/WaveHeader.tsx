@@ -14,7 +14,6 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, radius, spacing } from '@/theme';
-import { useTheme } from '@/hooks/use-theme';
 import { AppText } from '@/components/ui/AppText';
 
 const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
@@ -68,10 +67,9 @@ export const WaveHeader = React.memo(
       },
       ref,
     ) => {
-      const theme = useTheme();
       const insets = useSafeAreaInsets();
-      const surfaceColor = (theme as { surface?: string; background?: string }).surface ?? (theme as { surface?: string; background?: string }).background ?? '#FFFFFF';
-      const overlayColor = (theme as { overlay?: string }).overlay ?? 'rgba(15, 23, 42, 0.12)';
+      const surfaceColor = colors.surface;
+      const overlayColor = colors.overlay;
       const topPadding = safeArea ? insets.top : 0;
       const internalScrollValue = useSharedValue(0);
       const scrollValue = scrollY ?? internalScrollValue;

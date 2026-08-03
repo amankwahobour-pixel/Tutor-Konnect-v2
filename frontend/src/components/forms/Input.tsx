@@ -45,26 +45,30 @@ export const Input = React.memo(
         value,
         onChangeText,
         onEndEditing,
+        onFocus,
+        onBlur,
         ...props
       },
       ref,
     ) => {
+      const [isFocused, setIsFocused] = React.useState(false);
       const showClear = clearable && !!value && editable && !loading;
-      const statusColor = error ? colors.danger : success ? colors.success : colors.border;
+      const statusColor = error ? colors.danger : success ? colors.success : isFocused ? colors.primary : colors.border;
 
       const inputPaddingLeft = leftIcon ? iconPadding * 2 + spacing.sm : spacing.md;
       const inputPaddingRight = rightIcon || loading || showClear ? iconPadding * 2 + spacing.sm : spacing.md;
 
       const inputContainerStyle: StyleProp<ViewStyle> = [
         {
-          backgroundColor: colors.surface,
-          borderRadius: radius.md,
-          borderWidth: 1,
+          backgroundColor: isFocused ? colors.primarySofter : colors.surface,
+          borderRadius: radius.lg,
+          borderWidth: 1.5,
           borderColor: statusColor,
           paddingVertical: spacing.sm,
           paddingHorizontal: spacing.sm,
           flexDirection: 'row',
           alignItems: 'center',
+          minHeight: spacing.xxxl,
         },
         containerStyle,
       ];
@@ -74,14 +78,26 @@ export const Input = React.memo(
           flex: 1,
           color: colors.text,
           fontSize: typography.body,
+          lineHeight: typography.lineHeight.body,
           paddingLeft: inputPaddingLeft,
           paddingRight: inputPaddingRight,
+          paddingVertical: spacing.xs,
         },
         inputStyle,
       ];
 
       const helperContent = error || success || helperText;
       const helperVariant = error ? 'error' : success ? 'success' : 'info';
+
+      const handleFocus = React.useCallback((e: any) => {
+        setIsFocused(true);
+        onFocus?.(e);
+      }, [onFocus]);
+
+      const handleBlur = React.useCallback((e: any) => {
+        setIsFocused(false);
+        onBlur?.(e);
+      }, [onBlur]);
 
       return (
         <View style={{ width: '100%' }}>
@@ -102,6 +118,8 @@ export const Input = React.memo(
               placeholderTextColor={placeholderTextColor}
               onChangeText={onChangeText}
               onEndEditing={onEndEditing}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               value={value}
               accessibilityLabel={label ?? props.placeholder}
               accessibilityState={{ disabled: !editable || loading }}

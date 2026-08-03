@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, RefreshControl, TextInput, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, RefreshControl, TextInput, View } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getConversationBetween, sendMessage, markMessagesRead } from '@/features/chat/api/messages.api';
@@ -10,7 +10,7 @@ import { colors } from '@/theme';
 import styles from '../styles/chat.styles';
 import type { Message } from '@/features/chat/types';
 import { useApi } from '@/hooks/use-api';
-import ChatHeader from '../components/ChatHeader';
+import { WaveHeader } from '@/components/headers';
 
 interface MessageItemProps {
   message: Message;
@@ -81,7 +81,7 @@ export default function ChatScreen() {
       await refetch();
     } catch (err) {
       console.error('Failed to send message', err);
-      alert('Failed to send message');
+      Alert.alert('Message failed', 'Your message could not be sent. Please try again.');
     }
   };
 
@@ -95,7 +95,14 @@ export default function ChatScreen() {
 
   return (
     <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
-      <ChatHeader name={otherId || 'Tutor'} online />
+      <WaveHeader
+        title={otherId || 'Tutor'}
+        subtitle="Online"
+        backAction={{
+          onPress: () => router.back(),
+          accessibilityLabel: 'Go back',
+        }}
+      />
       <StateRenderer status={loading ? 'loading' : error ? 'error' : messages.length === 0 ? 'empty' : 'success'} error={error} onRetry={refetch} loadingMessage="Loading messages..." emptyTitle="No messages yet" emptySubtitle="Start the conversation with a message.">
         {() => (
           <FlatList

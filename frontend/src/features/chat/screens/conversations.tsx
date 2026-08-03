@@ -16,7 +16,7 @@ import type { Message } from '@/features/chat/types';
 import type { UserProfile } from '@/types';
 import { useApi } from '@/hooks/use-api';
 import { pushPath, buildChatRoute } from '@/lib/navigation';
-import MessagesHeader from '../components/MessagesHeader';
+import { WaveHeader } from '@/components/headers';
 
 interface ConversationItem {
   id: string;
@@ -141,7 +141,11 @@ export default function ConversationsScreen() {
 
   return (
     <View style={styles.container}>
-      <MessagesHeader title="Messages" subtitle="Stay in touch with your students" scrollY={scrollY} />
+      <WaveHeader
+        title="Messages"
+        subtitle="Stay in touch with your students"
+        scrollY={scrollY}
+      />
       <StateRenderer
         status={loading ? 'loading' : error ? 'error' : filteredConversations.length === 0 ? 'empty' : 'success'}
         error={error}
