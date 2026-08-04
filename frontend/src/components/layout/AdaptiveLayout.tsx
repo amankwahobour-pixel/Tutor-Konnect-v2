@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useResponsive, colors } from '@/theme';
+import { useResponsive, useColors } from '@/theme';
 import { SidebarNavigation, type NavItem } from './SidebarNavigation';
 
 interface AdaptiveLayoutProps {
@@ -19,6 +19,7 @@ export function AdaptiveLayout({
   tabBar,
 }: AdaptiveLayoutProps) {
   const { isMobile, sidebarWidth } = useResponsive();
+  const colors = useColors();
 
   if (isMobile) {
     return (
@@ -34,7 +35,7 @@ export function AdaptiveLayout({
       <View style={{ width: sidebarWidth }}>
         <SidebarNavigation items={sidebarItems} hiddenItems={sidebarHiddenItems} role={role} />
       </View>
-      <View style={styles.desktopContent}>{children}</View>
+      <View style={[styles.desktopContent, { backgroundColor: colors.background }]}>{children}</View>
     </View>
   );
 }
@@ -52,6 +53,5 @@ const styles = StyleSheet.create({
   },
   desktopContent: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });

@@ -1,12 +1,13 @@
 import { ActivityIndicator, View } from 'react-native';
 import { AppText } from '@/components/ui/AppText';
-import { colors, spacing } from '@/theme';
+import { useColors, spacing } from '@/theme';
 
 interface LoadingStateProps {
   message?: string;
 }
 
 export function LoadingState({ message = 'Loading…' }: LoadingStateProps) {
+  const colors = useColors();
   return (
     <View
       style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg }}

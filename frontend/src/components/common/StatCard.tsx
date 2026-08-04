@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppText } from '@/components/ui/AppText';
-import { colors, radius, spacing } from '@/theme';
+import { useColors, radius, spacing, type ColorPalette } from '@/theme';
 
 interface StatCardProps {
   icon: string;
@@ -16,17 +16,21 @@ interface StatCardProps {
 
 export function StatCard({
   icon,
-  iconColor = colors.primary,
+  iconColor,
   label,
   value,
   subtitle,
   progressPercent,
   style,
 }: StatCardProps) {
+  const colors = useColors();
+  const styles = getStyles(colors);
+  const accent = iconColor ?? colors.primary;
+
   return (
     <View style={[styles.card, style]}>
-      <View style={[styles.iconCircle, { backgroundColor: `${iconColor}18` }]}>
-        <Ionicons name={icon as any} size={18} color={iconColor} />
+      <View style={[styles.iconCircle, { backgroundColor: `${accent}18` }]}>
+        <Ionicons name={icon as any} size={18} color={accent} />
       </View>
       <AppText variant="h3" style={styles.value}>
         {value}
@@ -44,7 +48,7 @@ export function StatCard({
           <View
             style={[
               styles.progressFill,
-              { width: `${Math.min(progressPercent, 100)}%`, backgroundColor: iconColor },
+              { width: `${Math.min(progressPercent, 100)}%`, backgroundColor: accent },
             ]}
           />
         </View>
@@ -53,40 +57,42 @@ export function StatCard({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  iconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.xs,
-  },
-  value: {
-    marginBottom: 2,
-  },
-  subtitle: {
-    marginTop: 2,
-  },
-  progressTrack: {
-    width: '100%',
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.border,
-    marginTop: spacing.sm,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-});
+function getStyles(colors: ColorPalette) {
+  return StyleSheet.create({
+    card: {
+      flex: 1,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: radius.lg,
+      padding: spacing.md,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    iconCircle: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: spacing.xs,
+    },
+    value: {
+      marginBottom: 2,
+    },
+    subtitle: {
+      marginTop: 2,
+    },
+    progressTrack: {
+      width: '100%',
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.border,
+      marginTop: spacing.sm,
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: 2,
+    },
+  });
+}

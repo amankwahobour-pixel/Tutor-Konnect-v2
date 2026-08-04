@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs, Stack } from 'expo-router';
-import { colors, spacing, useResponsive } from '@/theme';
+import { useColors, spacing, useResponsive } from '@/theme';
 import { SidebarNavigation, type NavItem } from '@/components/layout';
 
 const navItems: NavItem[] = [
@@ -21,6 +21,7 @@ const hiddenItems: NavItem[] = [
 ];
 
 function ParentTabs() {
+  const colors = useColors();
   return (
     <Tabs
       screenOptions={{
@@ -31,7 +32,7 @@ function ParentTabs() {
           height: spacing.xxl + 8,
           paddingTop: spacing.sm,
           paddingBottom: spacing.md,
-          backgroundColor: colors.white,
+          backgroundColor: colors.surface,
           borderTopWidth: 0,
           elevation: 12,
         },
@@ -56,6 +57,7 @@ function ParentTabs() {
 
 export default function ParentLayout() {
   const { isMobile } = useResponsive();
+  const colors = useColors();
 
   if (isMobile) {
     return <ParentTabs />;
@@ -64,7 +66,7 @@ export default function ParentLayout() {
   return (
     <View style={styles.desktopContainer}>
       <SidebarNavigation items={navItems} hiddenItems={hiddenItems} role="parent" />
-      <View style={styles.desktopContent}>
+      <View style={[styles.desktopContent, { backgroundColor: colors.background }]}>
         <Stack screenOptions={{ headerShown: false }} />
       </View>
     </View>
@@ -78,6 +80,5 @@ const styles = StyleSheet.create({
   },
   desktopContent: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });

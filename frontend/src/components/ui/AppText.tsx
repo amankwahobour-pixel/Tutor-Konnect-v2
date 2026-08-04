@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text, type TextProps, type StyleProp, type TextStyle } from 'react-native';
-import { colors, typography } from '@/theme';
+import { typography, useColors, type ColorPalette } from '@/theme';
 
 export interface AppTextProps extends TextProps {
   variant?: 'display' | 'h1' | 'h2' | 'h3' | 'title' | 'subtitle' | 'body' | 'bodySmall' | 'caption' | 'label';
-  color?: keyof typeof colors;
+  color?: keyof ColorPalette;
   style?: StyleProp<TextStyle>;
 }
 
@@ -25,6 +25,7 @@ const AppTextComponent = React.forwardRef<React.ElementRef<typeof Text>, AppText
   { variant = 'body', color = 'text', style, ...props },
   ref,
 ) {
+  const colors = useColors();
   return <Text ref={ref} style={[{ color: colors[color], ...variantStyles[variant] }, style]} {...props} />;
 });
 

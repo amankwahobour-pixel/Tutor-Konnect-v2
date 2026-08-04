@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { View } from 'react-native';
 import { AppText } from '@/components/ui/AppText';
 import { PrimaryButton } from '@/components/buttons';
-import { colors, spacing } from '@/theme';
+import { spacing } from '@/theme';
 
 interface EmptyStateProps {
   icon?: ReactNode;

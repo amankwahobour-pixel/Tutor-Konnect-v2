@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, ImageSourcePropType, Text, View, type ImageStyle, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
-import { colors, radius, typography } from '@/theme';
+import { useColors, radius } from '@/theme';
 
 export interface AvatarProps {
   source?: ImageSourcePropType;
@@ -25,6 +25,7 @@ function AvatarComponent({
   textStyle,
   accessibilityLabel,
 }: AvatarProps) {
+  const colors = useColors();
   const containerSize = size;
   const textSize = Math.max(12, Math.round(size * 0.35));
   const badgeSize = Math.max(10, Math.round(size * 0.28));

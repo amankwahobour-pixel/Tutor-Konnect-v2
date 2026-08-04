@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
-import styles from './action-card.styles';
+import { useThemedStyles } from '@/theme';
+import { createActionCardStyles } from './action-card.styles';
 
 interface ActionCardProps {
   title: string;
@@ -11,6 +12,7 @@ interface ActionCardProps {
 }
 
 export function ActionCard({ title, subtitle, icon, onPress, style }: ActionCardProps) {
+  const styles = useThemedStyles(createActionCardStyles);
   const Card = onPress ? TouchableOpacity : View;
 
   return (
@@ -23,4 +25,3 @@ export function ActionCard({ title, subtitle, icon, onPress, style }: ActionCard
     </Card>
   );
 }
-

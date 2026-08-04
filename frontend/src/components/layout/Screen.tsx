@@ -1,7 +1,7 @@
 import React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing } from '@/theme';
+import { useColors, spacing, type ColorPalette } from '@/theme';
 
 export interface ScreenProps {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ export interface ScreenProps {
   scrollable?: boolean;
   safeArea?: boolean;
   keyboardAvoiding?: boolean;
-  backgroundColor?: keyof typeof colors;
+  backgroundColor?: keyof ColorPalette;
   padding?: 'none' | 'small' | 'medium' | 'large';
 }
 
@@ -31,6 +31,8 @@ function ScreenComponent({
   backgroundColor = 'background',
   padding = 'medium',
 }: ScreenProps) {
+  const colors = useColors();
+
   const containerStyle: StyleProp<ViewStyle> = [
     {
       flex: 1,

@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
-import styles from './page-header.styles';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useColors, useThemedStyles } from '@/theme';
+import { createPageHeaderStyles } from './page-header.styles';
 
 interface PageHeaderProps {
   title: string;
@@ -20,6 +20,9 @@ export function PageHeader({
   actionIconName,
   style,
 }: PageHeaderProps) {
+  const styles = useThemedStyles(createPageHeaderStyles);
+  const colors = useColors();
+
   return (
     <View style={[styles.container, style]}>
       <View style={styles.textBlock}>
@@ -38,4 +41,3 @@ export function PageHeader({
     </View>
   );
 }
-

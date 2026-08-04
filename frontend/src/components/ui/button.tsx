@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, type PressableProps, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
-import styles from './button.styles';
-import { colors } from '@/theme';
+import { useColors, useThemedStyles } from '@/theme';
+import { createButtonStyles } from './button.styles';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'danger';
 
@@ -21,6 +21,8 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
+  const colors = useColors();
+  const styles = useThemedStyles(createButtonStyles);
   const backgroundColor =
     variant === 'secondary' ? colors.surface : variant === 'danger' ? colors.error : colors.primary;
   const textColor = variant === 'secondary' ? colors.text : colors.white;
@@ -28,7 +30,6 @@ export function Button({
   return (
     <Pressable
       style={(state) => {
-        // Collect styles using styled array typed as StyleProp<ViewStyle>[]
         const s: StyleProp<ViewStyle>[] = [styles.button, { backgroundColor, opacity: state.pressed || disabled ? 0.8 : 1 }];
         if (containerStyle) s.push(containerStyle);
 
@@ -44,4 +45,3 @@ export function Button({
     </Pressable>
   );
 }
-

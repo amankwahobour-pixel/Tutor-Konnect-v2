@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePathname, useRouter } from 'expo-router';
 import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, type ColorPalette, radius, spacing, typography } from '@/theme';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 
 export interface NavItem {
@@ -23,7 +23,9 @@ interface SidebarNavigationProps {
 export function SidebarNavigation({ items, hiddenItems = [], role }: SidebarNavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const colors = useColors();
   const { user } = useAuthContext();
+  const styles = getStyles(colors);
 
   const isActive = (href: string) => {
     const cleanHref = href.replace(/^\//, '');
@@ -37,7 +39,6 @@ export function SidebarNavigation({ items, hiddenItems = [], role }: SidebarNavi
 
   return (
     <View style={styles.container}>
-      {/* Brand */}
       <View style={styles.brand}>
         <View style={styles.logoCircle}>
           <Ionicons name="school" size={24} color={colors.surface} />
@@ -110,7 +111,6 @@ export function SidebarNavigation({ items, hiddenItems = [], role }: SidebarNavi
         )}
       </ScrollView>
 
-      {/* User */}
       <View style={styles.userSection}>
         <Avatar
           source={user?.profile_photo ? { uri: user.profile_photo } : undefined}
@@ -130,105 +130,108 @@ export function SidebarNavigation({ items, hiddenItems = [], role }: SidebarNavi
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRightWidth: 1,
-    borderRightColor: colors.border,
-    paddingTop: Platform.OS === 'web' ? 16 : 40,
-  },
-  brand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  logoCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  brandText: {
-    color: colors.text,
-    fontSize: typography.body,
-    fontWeight: '700',
-  },
-  brandRole: {
-    textTransform: 'capitalize',
-  },
-  nav: {
-    flex: 1,
-  },
-  navContent: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
-  },
-  navItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 2,
-    borderRadius: radius.lg,
-    marginBottom: spacing.xs,
-  },
-  navItemActive: {
-    backgroundColor: colors.primaryLight,
-  },
-  navItemText: {
-    color: colors.textTertiary,
-    flex: 1,
-  },
-  navItemTextActive: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  activeIndicator: {
-    width: 3,
-    height: 20,
-    borderRadius: 2,
-    backgroundColor: colors.primary,
-  },
-  badge: {
-    minWidth: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.danger,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 6,
-  },
-  badgeText: {
-    color: colors.surface,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md,
-  },
-  userSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontWeight: '600',
-  },
-});
+function getStyles(colors: ColorPalette) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderRightWidth: 1,
+      borderRightColor: colors.border,
+      paddingTop: Platform.OS === 'web' ? 16 : 40,
+    },
+    brand: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.lg,
+      paddingBottom: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    logoCircle: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    brandText: {
+      color: colors.text,
+      fontSize: typography.body,
+      fontWeight: '700',
+    },
+    brandRole: {
+      textTransform: 'capitalize',
+    },
+    nav: {
+      flex: 1,
+    },
+    navContent: {
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.sm,
+    },
+    navItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm + 2,
+      borderRadius: radius.lg,
+      marginBottom: spacing.xs,
+    },
+    navItemActive: {
+      backgroundColor: colors.primaryLight,
+    },
+    navItemText: {
+      color: colors.textTertiary,
+      flex: 1,
+    },
+    navItemTextActive: {
+      color: colors.primary,
+      fontWeight: '600',
+    },
+    activeIndicator: {
+      width: 3,
+      height: 20,
+      borderRadius: 2,
+      backgroundColor: colors.primary,
+    },
+    badge: {
+      minWidth: 20,
+      height: 20,
+      borderRadius: 10,
+      backgroundColor: colors.danger,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 6,
+    },
+    badgeText: {
+      color: colors.surface,
+      fontSize: 10,
+      fontWeight: '700',
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+      marginVertical: spacing.sm,
+      marginHorizontal: spacing.md,
+    },
+    userSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    userInfo: {
+      flex: 1,
+    },
+    userName: {
+      fontWeight: '600',
+      color: colors.text,
+    },
+  });
+}

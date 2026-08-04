@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppText } from '@/components/ui/AppText';
 import { PrimaryButton } from '@/components/buttons';
-import { colors, spacing } from '@/theme';
+import { useColors, spacing } from '@/theme';
 
 interface ErrorStateProps {
   title?: string;
@@ -13,6 +13,7 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ title = 'Something went wrong', message, onRetry, retryLabel = 'Try Again' }: ErrorStateProps) {
+  const colors = useColors();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl }}>
       <View style={{

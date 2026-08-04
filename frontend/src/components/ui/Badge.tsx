@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, type TextProps, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 export interface BadgeProps extends Omit<TextProps, 'style'> {
   label: string;
@@ -10,23 +10,27 @@ export interface BadgeProps extends Omit<TextProps, 'style'> {
   textStyle?: StyleProp<TextStyle>;
 }
 
-const badgeBackgrounds: Record<NonNullable<BadgeProps['variant']>, string> = {
-  primary: colors.primaryLight,
-  secondary: colors.secondaryLight,
-  success: colors.successLight,
-  warning: colors.warningLight,
-  danger: colors.dangerLight,
-  neutral: colors.surfaceVariant,
-};
+function getBadgeBackgrounds(colors: ColorPalette): Record<NonNullable<BadgeProps['variant']>, string> {
+  return {
+    primary: colors.primaryLight,
+    secondary: colors.secondaryLight,
+    success: colors.successLight,
+    warning: colors.warningLight,
+    danger: colors.dangerLight,
+    neutral: colors.surfaceVariant,
+  };
+}
 
-const badgeTextColors: Record<NonNullable<BadgeProps['variant']>, string> = {
-  primary: colors.primaryDark,
-  secondary: colors.secondaryDark,
-  success: colors.success,
-  warning: '#B45309',
-  danger: colors.danger,
-  neutral: colors.textSecondary,
-};
+function getBadgeTextColors(colors: ColorPalette): Record<NonNullable<BadgeProps['variant']>, string> {
+  return {
+    primary: colors.primaryDark,
+    secondary: colors.secondaryDark,
+    success: colors.success,
+    warning: colors.warning,
+    danger: colors.danger,
+    neutral: colors.textSecondary,
+  };
+}
 
 const badgeSizes = {
   small: {
@@ -54,14 +58,17 @@ function BadgeComponent({
   textStyle,
   ...props
 }: BadgeProps) {
+  const colors = useColors();
   const badgeSize = badgeSizes[size];
+  const bg = getBadgeBackgrounds(colors)[variant];
+  const textColor = getBadgeTextColors(colors)[variant];
 
   return (
     <View
       style={[
         {
           alignSelf: 'flex-start',
-          backgroundColor: badgeBackgrounds[variant],
+          backgroundColor: bg,
           borderRadius: radius.pill,
           paddingVertical: badgeSize.paddingVertical,
           paddingHorizontal: badgeSize.paddingHorizontal,
@@ -72,7 +79,7 @@ function BadgeComponent({
       <Text
         style={[
           {
-            color: badgeTextColors[variant],
+            color: textColor,
             fontSize: badgeSize.fontSize,
             fontWeight: typography.weight.semibold,
             lineHeight: badgeSize.fontSize * 1.3,

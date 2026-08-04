@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { Animated, Pressable, View, Platform, type GestureResponderEvent, type StyleProp, type ViewStyle } from 'react-native';
-import { colors, radius, shadows, spacing } from '@/theme';
+import { useColors, radius, shadows, spacing } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -32,6 +32,7 @@ function BaseCardComponent({
   onPress,
   accessibilityLabel,
 }: BaseCardProps) {
+  const colors = useColors();
   const scale = useMemo(() => new Animated.Value(1), []);
 
   const handlePressIn = useCallback(() => {
@@ -51,16 +52,17 @@ function BaseCardComponent({
   const cardStyle = useMemo(
     () => [
       {
-        backgroundColor: colors.surface,
+        backgroundColor: colors.surfaceElevated,
         borderRadius: radius.xl,
         padding: spacing.lg,
         borderWidth: outlined ? 1.5 : 0,
         borderColor: outlined ? colors.border : 'transparent',
+        shadowColor: colors.shadow,
         ...elevationMap[elevation],
       },
       style,
     ] as StyleProp<ViewStyle>,
-    [elevation, outlined, style],
+    [colors, elevation, outlined, style],
   );
 
   const content = (

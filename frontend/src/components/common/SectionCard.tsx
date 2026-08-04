@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { AppText } from '@/components/ui/AppText';
-import { colors, radius, spacing } from '@/theme';
+import { useColors, radius, spacing, type ColorPalette } from '@/theme';
 
 interface SectionCardProps {
   title?: string;
@@ -13,6 +13,8 @@ interface SectionCardProps {
 }
 
 export function SectionCard({ title, subtitle, children, style, headerRight, noPadding }: SectionCardProps) {
+  const colors = useColors();
+  const styles = getStyles(colors);
   return (
     <View style={[styles.container, style]}>
       {(title || headerRight) && (
@@ -33,27 +35,29 @@ export function SectionCard({ title, subtitle, children, style, headerRight, noP
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: 'hidden',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
-  },
-  headerText: {
-    flex: 1,
-  },
-  body: {
-    padding: spacing.md,
-  },
-  noPadding: {},
-});
+function getStyles(colors: ColorPalette) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: radius.xl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: 'hidden',
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: spacing.md,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.sm,
+    },
+    headerText: {
+      flex: 1,
+    },
+    body: {
+      padding: spacing.md,
+    },
+    noPadding: {},
+  });
+}

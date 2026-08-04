@@ -4,7 +4,7 @@ import type { SharedValue } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { WaveHeader } from './WaveHeader';
 import { Avatar } from '@/components/ui/Avatar';
-import { colors, spacing } from '@/theme';
+import { useColors, spacing } from '@/theme';
 
 export interface DashboardHeaderProps {
   greeting: string;
@@ -31,7 +31,9 @@ export const DashboardHeader = React.memo(
       statisticsSlot,
       scrollY,
     },
-    ref) => (
+    ref) => {
+      const colors = useColors();
+      return (
       <WaveHeader
         ref={ref}
         title={greeting}
@@ -53,6 +55,7 @@ export const DashboardHeader = React.memo(
           <View style={{ marginTop: spacing.md }}>{statisticsSlot}</View>
         ) : null}
       </WaveHeader>
-    ),
+      );
+    },
   ),
 );

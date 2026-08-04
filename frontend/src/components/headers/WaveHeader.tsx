@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radius, spacing } from '@/theme';
+import { useColors, radius, spacing } from '@/theme';
 import { AppText } from '@/components/ui/AppText';
 
 const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
@@ -68,6 +68,7 @@ export const WaveHeader = React.memo(
       ref,
     ) => {
       const insets = useSafeAreaInsets();
+      const colors = useColors();
       const surfaceColor = colors.surface;
       const overlayColor = colors.overlay;
       const topPadding = safeArea ? insets.top : 0;

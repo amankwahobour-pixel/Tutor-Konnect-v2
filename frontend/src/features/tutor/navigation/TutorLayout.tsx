@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
-import { colors, spacing, useResponsive } from '@/theme';
+import { Tabs, Stack } from 'expo-router';
+import { useColors, spacing, useResponsive } from '@/theme';
 import { SidebarNavigation, type NavItem } from '@/components/layout';
 
 const navItems: NavItem[] = [
@@ -24,6 +24,7 @@ const hiddenItems: NavItem[] = [
 ];
 
 function TutorTabs() {
+  const colors = useColors();
   return (
     <Tabs
       screenOptions={{
@@ -34,7 +35,7 @@ function TutorTabs() {
           height: spacing.xxl + 8,
           paddingTop: spacing.sm,
           paddingBottom: spacing.md,
-          backgroundColor: colors.white,
+          backgroundColor: colors.surface,
           borderTopWidth: 0,
           elevation: 12,
         },
@@ -44,51 +45,11 @@ function TutorTabs() {
         },
       }}
     >
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="requests"
-        options={{
-          title: 'Bookings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: 'Messages',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="earnings"
-        options={{
-          title: 'Earnings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="wallet-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle-outline" size={size} color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="dashboard" options={{ title: 'Home', tabBarIcon: ({ color, size }) => (<Ionicons name="home-outline" size={size} color={color} />) }} />
+      <Tabs.Screen name="requests" options={{ title: 'Bookings', tabBarIcon: ({ color, size }) => (<Ionicons name="calendar-outline" size={size} color={color} />) }} />
+      <Tabs.Screen name="messages" options={{ title: 'Messages', tabBarIcon: ({ color, size }) => (<Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />) }} />
+      <Tabs.Screen name="earnings" options={{ title: 'Earnings', tabBarIcon: ({ color, size }) => (<Ionicons name="wallet-outline" size={size} color={color} />) }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: ({ color, size }) => (<Ionicons name="person-circle-outline" size={size} color={color} />) }} />
       <Tabs.Screen name="students" options={{ href: null }} />
       <Tabs.Screen name="availability" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
@@ -102,6 +63,7 @@ function TutorTabs() {
 
 export default function TutorLayout() {
   const { isMobile } = useResponsive();
+  const colors = useColors();
 
   if (isMobile) {
     return <TutorTabs />;
@@ -110,14 +72,12 @@ export default function TutorLayout() {
   return (
     <View style={styles.desktopContainer}>
       <SidebarNavigation items={navItems} hiddenItems={hiddenItems} role="tutor" />
-      <View style={styles.desktopContent}>
+      <View style={[styles.desktopContent, { backgroundColor: colors.background }]}>
         <Stack screenOptions={{ headerShown: false }} />
       </View>
     </View>
   );
 }
-
-import { Stack } from 'expo-router';
 
 const styles = StyleSheet.create({
   desktopContainer: {
@@ -126,6 +86,5 @@ const styles = StyleSheet.create({
   },
   desktopContent: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });

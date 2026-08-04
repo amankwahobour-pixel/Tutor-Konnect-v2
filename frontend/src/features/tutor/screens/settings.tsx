@@ -5,10 +5,10 @@ import { useAuthContext } from '@/features/auth/context/auth.context';
 import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Badge } from '@/components/ui/Badge';
-import { colors } from '@/theme';
+import { useColors, useThemedStyles, useTheme, type ThemeMode } from '@/theme';
 import type { SettingItem } from '@/types';
 import type { ComponentProps } from 'react';
-import { styles } from '../styles/settings.styles';
+import { createSettingsStyles } from '../styles/settings.styles';
 
 type SettingItemExtended = Omit<SettingItem, 'label'> & {
   title: string;
@@ -26,8 +26,17 @@ const settingsItems: SettingItemExtended[] = [
   { id: 'help', label: 'Help & Support', title: 'Help & Support', icon: 'help-circle-outline', route: '' },
 ];
 
+const themeOptions: { mode: ThemeMode; label: string; icon: string }[] = [
+  { mode: 'light', label: 'Light', icon: 'sunny-outline' },
+  { mode: 'dark', label: 'Dark', icon: 'moon-outline' },
+  { mode: 'system', label: 'Auto', icon: 'phone-portrait-outline' },
+];
+
 export default function SettingsScreen() {
   const { user } = useAuthContext();
+  const colors = useColors();
+  const { mode, setMode } = useTheme();
+  const styles = useThemedStyles(createSettingsStyles);
   const displayName = user?.full_name || 'Tutor';
   const displayEmail = user?.email || 'No email provided';
 
@@ -55,6 +64,38 @@ export default function SettingsScreen() {
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
         </BaseCard>
+
+        <View style={styles.themeRow}>
+          <View style={styles.themeIconContainer}>
+            <Ionicons name="color-palette-outline" size={20} color={colors.primary} />
+          </View>
+          <View style={styles.themeInfo}>
+            <AppText variant="body" style={styles.themeTitle}>Appearance</AppText>
+            <AppText variant="caption" style={styles.themeSubtitle}>Choose your theme</AppText>
+          </View>
+          <View style={styles.themeOptions}>
+            {themeOptions.map((opt) => {
+              const active = mode === opt.mode;
+              return (
+                <TouchableOpacity
+                  key={opt.mode}
+                  style={[
+                    styles.themeOption,
+                    active ? styles.themeOptionActive : styles.themeOptionInactive,
+                  ]}
+                  onPress={() => setMode(opt.mode)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${opt.label} theme`}
+                >
+                  <Ionicons name={opt.icon as any} size={14} color={active ? colors.surface : colors.textSecondary} />
+                  <AppText variant="label" style={[styles.themeOptionText, active ? styles.themeOptionTextActive : styles.themeOptionTextInactive]}>
+                    {opt.label}
+                  </AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
 
         <View style={styles.section}>
           {settingsItems.map((item) => (

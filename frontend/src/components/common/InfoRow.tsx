@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppText } from '@/components/ui/AppText';
-import { colors, radius, spacing } from '@/theme';
+import { useColors, spacing, type ColorPalette } from '@/theme';
 
 interface InfoRowProps {
   icon: string;
@@ -13,11 +13,14 @@ interface InfoRowProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export function InfoRow({ icon, label, value, children, iconColor = colors.primary, style }: InfoRowProps) {
+export function InfoRow({ icon, label, value, children, iconColor, style }: InfoRowProps) {
+  const colors = useColors();
+  const styles = getStyles(colors);
+  const accent = iconColor ?? colors.primary;
   return (
     <View style={[styles.row, style]}>
-      <View style={[styles.iconBox, { backgroundColor: `${iconColor}18` }]}>
-        <Ionicons name={icon as any} size={16} color={iconColor} />
+      <View style={[styles.iconBox, { backgroundColor: `${accent}18` }]}>
+        <Ionicons name={icon as any} size={16} color={accent} />
       </View>
       <AppText variant="bodySmall" color="textSecondary" style={styles.label}>
         {label}
@@ -29,28 +32,31 @@ export function InfoRow({ icon, label, value, children, iconColor = colors.prima
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
-  },
-  iconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    flex: 1,
-  },
-  valueContainer: {
-    flexShrink: 1,
-  },
-  value: {
-    fontWeight: '600',
-    textAlign: 'right',
-  },
-});
+function getStyles(colors: ColorPalette) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingVertical: spacing.xs,
+    },
+    iconBox: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    label: {
+      flex: 1,
+    },
+    valueContainer: {
+      flexShrink: 1,
+    },
+    value: {
+      fontWeight: '600',
+      textAlign: 'right',
+      color: colors.text,
+    },
+  });
+}

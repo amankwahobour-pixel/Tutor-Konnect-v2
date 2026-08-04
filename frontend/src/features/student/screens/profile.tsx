@@ -6,15 +6,24 @@ import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
-import { colors } from '@/theme';
-import { Image, ScrollView, View } from 'react-native';
+import { useColors, useThemedStyles, useTheme, type ThemeMode } from '@/theme';
+import { Image, ScrollView, View, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { styles } from '../styles/profile.styles';
+import { createProfileStyles } from '../styles/profile.styles';
+
+const themeOptions: { mode: ThemeMode; label: string; icon: string }[] = [
+  { mode: 'light', label: 'Light', icon: 'sunny-outline' },
+  { mode: 'dark', label: 'Dark', icon: 'moon-outline' },
+  { mode: 'system', label: 'Auto', icon: 'phone-portrait-outline' },
+];
 
 export default function StudentProfileScreen() {
   const { user, logout } = useAuthContext();
+  const colors = useColors();
+  const { mode, setMode } = useTheme();
+  const styles = useThemedStyles(createProfileStyles);
 
   const handleLogout = async () => {
     await logout();
@@ -33,7 +42,7 @@ export default function StudentProfileScreen() {
         </View>
 
         <BaseCard style={styles.heroCard} elevation="lg">
-          <LinearGradient colors={['#E8F9FF', '#FFFFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.heroGradient}>
+          <LinearGradient colors={[colors.primaryLight, colors.surface]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.heroGradient}>
             <View style={styles.avatarContainer}>
               {user?.profile_photo ? (
                 <Image source={{ uri: user.profile_photo }} style={styles.avatar} />
@@ -66,6 +75,28 @@ export default function StudentProfileScreen() {
               </View>
             </View>
           </LinearGradient>
+        </BaseCard>
+
+        <BaseCard style={styles.actionsCard} elevation="md">
+          <AppText variant="subtitle">Appearance</AppText>
+          <AppText variant="caption" color="textSecondary">Choose your theme preference</AppText>
+          <View style={styles.themeRow}>
+            <View style={styles.themeOptions}>
+              {themeOptions.map((opt) => {
+                const active = mode === opt.mode;
+                return (
+                  <Pressable
+                    key={opt.mode}
+                    style={[styles.themeOption, active ? styles.themeOptionActive : styles.themeOptionInactive]}
+                    onPress={() => setMode(opt.mode)}
+                  >
+                    <Ionicons name={opt.icon as any} size={14} color={active ? colors.surface : colors.textSecondary} />
+                    <AppText variant="label" style={{ color: active ? colors.surface : colors.textSecondary }}>{opt.label}</AppText>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
         </BaseCard>
 
         <BaseCard style={styles.actionsCard} elevation="md">
