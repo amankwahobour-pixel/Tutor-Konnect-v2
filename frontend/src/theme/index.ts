@@ -5,3 +5,4 @@ export { radius } from './radius';
 export { shadows } from './shadows';
 export { sizes } from './sizes';
 export { animations } from './animations';
+export { breakpoints, useResponsive, type Breakpoint, type ResponsiveState } from './responsive';

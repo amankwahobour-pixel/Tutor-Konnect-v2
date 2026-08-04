@@ -14,11 +14,12 @@ import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { SearchBar } from '@/components/forms';
-import { colors, spacing } from '@/theme';
+import { colors, spacing, useResponsive } from '@/theme';
 import { styles } from '../styles/dashboard.styles';
 
 export default function StudentDashboard() {
   const { user } = useAuthContext();
+  const { columns, isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch all tutors
@@ -198,7 +199,7 @@ export default function StudentDashboard() {
           data={filteredTutors}
           keyExtractor={(item) => item.id}
           renderItem={renderTutor}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[styles.listContent, !isMobile && { maxWidth: columns >= 3 ? 1000 : 720, alignSelf: 'center', width: '100%' }]}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} tintColor={colors.primary} />}
           ListHeaderComponent={listHeaderComponent}

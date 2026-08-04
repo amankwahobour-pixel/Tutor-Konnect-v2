@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Animated, Pressable, View, type GestureResponderEvent, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Pressable, View, Platform, type GestureResponderEvent, type StyleProp, type ViewStyle } from 'react-native';
 import { colors, radius, shadows, spacing } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -75,6 +75,7 @@ function BaseCardComponent({
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        style={Platform.OS === 'web' ? ({ hovered }: any) => hovered ? [{ opacity: 0.92 }] : undefined : undefined}
       >
         {content}
       </Pressable>
