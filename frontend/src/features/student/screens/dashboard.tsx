@@ -7,14 +7,14 @@ import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StateRenderer } from '@/components/common';
+import { StateRenderer, SkeletonCard } from '@/components/common';
 import { BaseCard } from '@/components/cards';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { SearchBar } from '@/components/forms';
-import { colors } from '@/theme';
+import { colors, spacing } from '@/theme';
 import { styles } from '../styles/dashboard.styles';
 
 export default function StudentDashboard() {
@@ -167,29 +167,44 @@ export default function StudentDashboard() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StateRenderer
-        status={loading ? 'loading' : error ? 'error' : filteredTutors.length === 0 ? 'empty' : 'success'}
-        error={error}
-        onRetry={refetch}
-        loadingMessage="Finding tutors..."
-        errorTitle="Failed to load tutors"
-        emptyTitle="No tutors found"
-        emptySubtitle={searchQuery ? 'Try a different search' : 'Explore our tutors'}
-        emptyIcon={<Ionicons name="search" size={64} color={colors.textSecondary} />}
-      >
-        {() => (
-          <FlatList
-            data={filteredTutors}
-            keyExtractor={(item) => item.id}
-            renderItem={renderTutor}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} tintColor={colors.primary} />}
-            ListHeaderComponent={listHeaderComponent}
-            ListFooterComponent={<View style={{ height: 32 }} />}
-          />
-        )}
-      </StateRenderer>
+      {loading ? (
+        <View style={{ padding: spacing.lg, gap: spacing.sm }}>
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </View>
+      ) : error ? (
+        <StateRenderer
+          status="error"
+          error={error}
+          onRetry={refetch}
+          errorTitle="Failed to load tutors"
+        >
+          {() => null}
+        </StateRenderer>
+      ) : filteredTutors.length === 0 ? (
+        <StateRenderer
+          status="empty"
+          error={null}
+          onRetry={refetch}
+          emptyTitle="No tutors found"
+          emptySubtitle={searchQuery ? 'Try a different search' : 'Explore our tutors'}
+          emptyIcon={<Ionicons name="search" size={64} color={colors.textSecondary} />}
+        >
+          {() => null}
+        </StateRenderer>
+      ) : (
+        <FlatList
+          data={filteredTutors}
+          keyExtractor={(item) => item.id}
+          renderItem={renderTutor}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} tintColor={colors.primary} />}
+          ListHeaderComponent={listHeaderComponent}
+          ListFooterComponent={<View style={{ height: 32 }} />}
+        />
+      )}
     </SafeAreaView>
   );
 }

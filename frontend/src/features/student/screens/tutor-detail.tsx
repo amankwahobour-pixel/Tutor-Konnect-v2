@@ -90,10 +90,10 @@ export default function TutorDetailScreen() {
               <BaseCard style={styles.heroCard} elevation="lg">
                 <LinearGradient colors={['#E8F9FF', '#FFFFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.heroGradient}>
                   <View style={styles.profileHeader}>
-                    <Avatar initials={(tutor.user_id || 'TU').slice(0, 2).toUpperCase()} size={72} accessibilityLabel="Tutor avatar" />
+                    <Avatar initials={(tutor.full_name || tutor.user_id || 'TU').slice(0, 2).toUpperCase()} size={72} accessibilityLabel="Tutor avatar" />
                     <View style={styles.profileInfo}>
                       <View style={styles.nameRow}>
-                        <AppText variant="h3">{`Tutor ${tutor.user_id || ''}`}</AppText>
+                        <AppText variant="h3">{tutor.full_name || 'Tutor'}</AppText>
                         <Badge label={tutor.verification_status || 'Active'} variant="success" size="small" />
                       </View>
                       <AppText variant="caption" style={styles.role}>{tutor.location ?? 'Available for sessions'}</AppText>

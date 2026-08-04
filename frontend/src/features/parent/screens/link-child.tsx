@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Alert, Pressable, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthContext } from '@/features/auth/context/auth.context';
@@ -10,6 +10,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { Input } from '@/components/forms';
 import { Screen } from '@/components/layout';
+import { SectionCard } from '@/components/common';
 import { colors, radius, spacing } from '@/theme';
 import type { UserProfile } from '@/types';
 
@@ -55,7 +56,7 @@ export default function LinkChildScreen() {
     try {
       await requestWardLink(user.id, foundStudent.id, relation || undefined, query || undefined);
       Alert.alert(
-        'Request sent',
+        'Request Sent',
         `A linking request has been sent to ${foundStudent.full_name || 'the student'}. You will be notified when they approve.`,
         [{ text: 'OK', onPress: () => router.back() }],
       );
@@ -66,15 +67,16 @@ export default function LinkChildScreen() {
     }
   };
 
-  const modeTabs: { key: SearchMode; label: string; icon: string }[] = [
-    { key: 'code', label: 'Parent Code', icon: 'qr-code-outline' },
-    { key: 'phone', label: 'Phone', icon: 'call-outline' },
-    { key: 'id', label: 'Student ID', icon: 'card-outline' },
+  const modeTabs: { key: SearchMode; label: string; icon: string; desc: string }[] = [
+    { key: 'code', label: 'Parent Code', icon: 'qr-code-outline', desc: 'Enter the code your child shared with you.' },
+    { key: 'phone', label: 'Phone Number', icon: 'call-outline', desc: 'Search by your child\'s registered phone number.' },
+    { key: 'id', label: 'Student ID', icon: 'card-outline', desc: 'Enter your child\'s unique Student ID.' },
   ];
+
+  const activeTab = modeTabs.find((t) => t.key === mode)!;
 
   return (
     <Screen style={styles.screen} contentStyle={styles.content} keyboardAvoiding>
-      {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
@@ -82,11 +84,18 @@ export default function LinkChildScreen() {
         <AppText variant="h3">Link a Child</AppText>
       </View>
 
-      <View style={styles.body}>
-        <AppText variant="body" color="textSecondary" style={styles.description}>
-          Search for your child's account using their Parent Code, phone number, or Student ID.
-          The student must approve your request before you can access their data.
-        </AppText>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.body}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Info Banner */}
+        <View style={styles.infoBanner}>
+          <Ionicons name="shield-checkmark-outline" size={20} color={colors.primary} />
+          <AppText variant="bodySmall" color="textSecondary" style={styles.infoText}>
+            Every linking request requires explicit approval from the student before access is granted.
+          </AppText>
+        </View>
 
         {/* Mode Tabs */}
         <View style={styles.modeTabs}>
@@ -100,6 +109,8 @@ export default function LinkChildScreen() {
                 setFoundStudent(null);
                 setError(null);
               }}
+              accessibilityRole="button"
+              accessibilityLabel={`Search by ${tab.label}`}
             >
               <Ionicons
                 name={tab.icon as any}
@@ -117,28 +128,33 @@ export default function LinkChildScreen() {
         </View>
 
         {/* Search */}
-        <View style={styles.searchRow}>
-          <Input
-            placeholder={
-              mode === 'code'
-                ? 'Enter Parent Code'
-                : mode === 'phone'
-                  ? 'Enter phone number'
-                  : 'Enter Student ID'
-            }
-            value={query}
-            onChangeText={setQuery}
-            containerStyle={styles.searchInput}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <PrimaryButton
-            title="Search"
-            onPress={handleSearch}
-            loading={searching}
-            containerStyle={styles.searchBtn}
-          />
-        </View>
+        <SectionCard>
+          <AppText variant="caption" color="textSecondary" style={styles.searchDesc}>
+            {activeTab.desc}
+          </AppText>
+          <View style={styles.searchRow}>
+            <Input
+              placeholder={
+                mode === 'code'
+                  ? 'Enter Parent Code'
+                  : mode === 'phone'
+                    ? 'Enter phone number'
+                    : 'Enter Student ID'
+              }
+              value={query}
+              onChangeText={setQuery}
+              containerStyle={styles.searchInput}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <PrimaryButton
+              title="Search"
+              onPress={handleSearch}
+              loading={searching}
+              containerStyle={styles.searchBtn}
+            />
+          </View>
+        </SectionCard>
 
         {error && (
           <View style={styles.errorBox}>
@@ -151,7 +167,7 @@ export default function LinkChildScreen() {
 
         {/* Found Student */}
         {foundStudent && (
-          <BaseCard style={styles.studentCard} elevation="md">
+          <SectionCard title="Student Found">
             <View style={styles.studentRow}>
               <Avatar
                 source={foundStudent.profile_photo ? { uri: foundStudent.profile_photo } : undefined}
@@ -190,30 +206,29 @@ export default function LinkChildScreen() {
                 containerStyle={styles.linkBtn}
               />
             </View>
-          </BaseCard>
+          </SectionCard>
         )}
 
         {/* QR Code Info */}
         {mode === 'code' && !foundStudent && (
-          <BaseCard style={styles.qrCard} elevation="sm">
-            <View style={styles.qrIcon}>
-              <Ionicons name="qr-code-outline" size={40} color={colors.primary} />
+          <SectionCard>
+            <View style={styles.qrInfo}>
+              <View style={styles.qrIcon}>
+                <Ionicons name="qr-code-outline" size={40} color={colors.primary} />
+              </View>
+              <AppText variant="body" style={styles.qrTitle}>
+                What is a Parent Code?
+              </AppText>
+              <AppText variant="bodySmall" color="textSecondary" style={styles.qrDesc}>
+                The Parent Code is your child's registered phone number on TutorKonnect. Ask your child to share their code or QR code from their app settings.
+              </AppText>
             </View>
-            <AppText variant="body" style={styles.qrTitle}>
-              What is a Parent Code?
-            </AppText>
-            <AppText variant="bodySmall" color="textSecondary" style={styles.qrDesc}>
-              The Parent Code is your child's registered phone number on TutorKonnect.
-              Ask your child to share their code or QR code from their app settings.
-            </AppText>
-          </BaseCard>
+          </SectionCard>
         )}
-      </View>
+      </ScrollView>
     </Screen>
   );
 }
-
-import { Pressable } from 'react-native';
 
 const styles = StyleSheet.create({
   screen: {
@@ -235,13 +250,21 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
   },
   body: {
-    flex: 1,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xl,
   },
-  description: {
-    lineHeight: 22,
-    marginBottom: spacing.lg,
+  infoBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primaryLight,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  infoText: {
+    flex: 1,
+    lineHeight: 20,
   },
   modeTabs: {
     flexDirection: 'row',
@@ -271,6 +294,10 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: '600',
   },
+  searchDesc: {
+    marginBottom: spacing.sm,
+    lineHeight: 20,
+  },
   searchRow: {
     flexDirection: 'row',
     gap: spacing.sm,
@@ -294,11 +321,6 @@ const styles = StyleSheet.create({
   errorText: {
     flex: 1,
   },
-  studentCard: {
-    borderRadius: radius.xl,
-    padding: spacing.md,
-    marginTop: spacing.lg,
-  },
   studentRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -318,11 +340,8 @@ const styles = StyleSheet.create({
   linkBtn: {
     flex: 1,
   },
-  qrCard: {
+  qrInfo: {
     alignItems: 'center',
-    padding: spacing.xl,
-    borderRadius: radius.xl,
-    marginTop: spacing.lg,
   },
   qrIcon: {
     width: 72,

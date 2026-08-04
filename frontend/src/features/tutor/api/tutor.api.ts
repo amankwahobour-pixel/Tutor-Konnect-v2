@@ -3,6 +3,8 @@ import { apiFetch, ApiRequestOptions } from '@/services/api';
 export interface TutorProfile {
   id: string;
   user_id: string;
+  full_name?: string;
+  profile_photo?: string;
   bio?: string;
   subjects?: string[];
   hourly_rate: number;
@@ -74,6 +76,8 @@ export async function getTutorProfile(userId: string, options?: ApiRequestOption
         data: {
           id: `tutor-${userId}`,
           user_id: userId,
+          full_name: 'Demo Tutor',
+          profile_photo: undefined,
           bio: 'Mock tutor bio',
           subjects: ['Mathematics', 'Physics'],
           hourly_rate: 80,

@@ -21,7 +21,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { Screen } from '@/components/layout';
-import { StateRenderer } from '@/components/common';
+import { StateRenderer, SkeletonCard } from '@/components/common';
 import { DashboardHeader } from '@/components/headers';
 import type { Earnings, TutorProfile, TutorRequest } from '@/types';
 import { colors, radius, spacing } from '@/theme';
@@ -159,7 +159,13 @@ export default function TutorDashboard() {
     () => previewRequests.filter((item: TutorRequest) => item.status !== 'rejected' && item.status !== 'completed' && item.scheduled_time),
     [previewRequests],
   );
-  const activityItems = useMemo<{ id: string; subject: string; status: string }[]>(() => [], []);
+  const activityItems = useMemo<{ id: string; subject: string; status: string }[]>(() => {
+    return (requestsData ?? []).slice(0, 5).map((item: TutorRequest) => ({
+      id: item.id,
+      subject: item.subject || 'Lesson',
+      status: item.status === 'pending_tutor_acceptance' ? 'New request' : item.status === 'accepted' ? 'Accepted' : item.status,
+    }));
+  }, [requestsData]);
 
   return (
     <Screen style={styles.screen} contentStyle={styles.screenContent}>
@@ -171,7 +177,13 @@ export default function TutorDashboard() {
         loadingMessage="Loading dashboard..."
       >
         {() =>
-          tutorProfile ? (
+          profileLoading && !tutorProfile ? (
+            <View style={{ padding: spacing.lg, gap: spacing.sm }}>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </View>
+          ) : tutorProfile ? (
             <View style={styles.shell}>
               <DashboardHeader
                 greeting={getGreeting()}

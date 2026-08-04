@@ -64,6 +64,8 @@ export interface UserProfile {
 export interface TutorProfile {
   id: string;
   user_id: string;
+  full_name?: string;
+  profile_photo?: string;
   subjects: string[];
   experience_years: number;
   hourly_rate: number;

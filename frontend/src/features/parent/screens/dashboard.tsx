@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { RefreshControl, StyleSheet, View, useWindowDimensions, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { StyleSheet, View, useWindowDimensions, RefreshControl, Pressable } from 'react-native';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useAnimatedScrollHandler,
@@ -10,10 +10,11 @@ import Animated, {
   withDelay,
   withSpring,
   withTiming,
+  interpolate,
 } from 'react-native-reanimated';
 import { useAuthContext } from '@/features/auth/context/auth.context';
-import { getOrCreateParentProfile, getApprovedWards, getWardSummary, getPendingLinkingRequests } from '../api/parent.api';
-import { WardSelector, ProgressCard } from '../components';
+import { getOrCreateParentProfile, getApprovedWards, getWardSummary } from '../api/parent.api';
+import { WardSelector } from '../components';
 import { LessonStatusBadge } from '../components/LessonStatusBadge';
 import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
@@ -21,9 +22,9 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { Screen } from '@/components/layout';
-import { StateRenderer, EmptyState } from '@/components/common';
+import { EmptyState, StatCard, SectionCard, Skeleton, SkeletonCard, SkeletonStatsGrid } from '@/components/common';
 import { colors, radius, spacing } from '@/theme';
-import type { ParentProfile, Ward, WardSummary, LinkingRequest } from '../types';
+import type { ParentProfile, Ward, WardSummary } from '../types';
 
 const AnimatedSection = React.memo(function AnimatedSection({
   children,
@@ -57,34 +58,30 @@ export default function ParentDashboard() {
   const [wards, setWards] = useState<Ward[]>([]);
   const [selectedWardId, setSelectedWardId] = useState<string | null>(null);
   const [wardSummary, setWardSummary] = useState<WardSummary | null>(null);
-  const [linkingRequests, setLinkingRequests] = useState<LinkingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [wardLoading, setWardLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
+    onScroll: (event) => { scrollY.value = event.contentOffset.y; },
   });
 
   const headerStyle = useAnimatedStyle(() => ({
-    opacity: Math.max(0, 1 - scrollY.value / 120),
-    transform: [{ translateY: scrollY.value * 0.3 }],
+    opacity: interpolate(scrollY.value, [0, 120], [1, 0], 'clamp'),
+    transform: [{ translateY: interpolate(scrollY.value, [0, 120], [0, -36], 'clamp') }],
   }));
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user?.id) return;
     setLoading(true);
     setError(null);
     try {
       const profile = await getOrCreateParentProfile(user);
       setParentProfile(profile);
-
       const wardList = await getApprovedWards(user.id);
       setWards(wardList);
-
       if (wardList.length > 0 && !selectedWardId) {
         setSelectedWardId(wardList[0].id);
       }
@@ -93,11 +90,11 @@ export default function ParentDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
 
   useEffect(() => {
     loadData();
-  }, [user?.id]);
+  }, [loadData]);
 
   useEffect(() => {
     const loadWardData = async () => {
@@ -133,7 +130,9 @@ export default function ParentDashboard() {
   };
 
   const handleRefresh = async () => {
+    setRefreshing(true);
     await loadData();
+    setRefreshing(false);
   };
 
   const handleSelectWard = (ward: Ward) => {
@@ -147,14 +146,14 @@ export default function ParentDashboard() {
   if (loading) {
     return (
       <Screen style={styles.screen}>
-        <StateRenderer
-          status="loading"
-          error={null}
-          onRetry={handleRefresh}
-          loadingMessage="Loading your dashboard..."
-        >
-          {() => null}
-        </StateRenderer>
+        <View style={styles.skeletonHeader} />
+        <View style={styles.skeletonBody}>
+          <Skeleton width="60%" height={24} style={{ marginBottom: spacing.md }} />
+          <SkeletonCard />
+          <SkeletonStatsGrid />
+          <SkeletonCard />
+          <SkeletonCard />
+        </View>
       </Screen>
     );
   }
@@ -162,14 +161,13 @@ export default function ParentDashboard() {
   if (error) {
     return (
       <Screen style={styles.screen}>
-        <StateRenderer
-          status="error"
-          error={error}
-          onRetry={handleRefresh}
-          errorTitle="Failed to load dashboard"
-        >
-          {() => null}
-        </StateRenderer>
+        <EmptyState
+          icon={<Ionicons name="cloud-offline-outline" size={48} color={colors.danger} />}
+          title="Something went wrong"
+          message="We couldn't load your dashboard. Please try again."
+          actionLabel="Retry"
+          onAction={handleRefresh}
+        />
       </Screen>
     );
   }
@@ -199,14 +197,6 @@ export default function ParentDashboard() {
                     {wards.length} {wards.length === 1 ? 'Ward' : 'Wards'}
                   </AppText>
                 </View>
-                {linkingRequests.length > 0 && (
-                  <View style={styles.heroPill}>
-                    <Ionicons name="notifications-outline" size={14} color={colors.surface} />
-                    <AppText variant="caption" style={styles.heroPillText}>
-                      {linkingRequests.length} pending
-                    </AppText>
-                  </View>
-                )}
               </View>
             </View>
             <Pressable onPress={() => router.push('/(parent)/profile')}>
@@ -226,13 +216,13 @@ export default function ParentDashboard() {
         onScroll={scrollHandler}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={handleRefresh} tintColor={colors.primary} />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
         }
       >
         {wards.length === 0 ? (
           <AnimatedSection index={0}>
             <EmptyState
-              icon="people-outline"
+              icon={<Ionicons name="people-outline" size={48} color={colors.primary} />}
               title="No wards linked yet"
               message="Link your child's account to monitor their progress, lessons, and stay connected with their tutors."
               actionLabel="Link a child"
@@ -241,7 +231,6 @@ export default function ParentDashboard() {
           </AnimatedSection>
         ) : (
           <>
-            {/* Ward Selector */}
             <AnimatedSection index={0}>
               <WardSelector
                 wards={wards}
@@ -251,7 +240,13 @@ export default function ParentDashboard() {
               />
             </AnimatedSection>
 
-            {selectedWard && wardSummary ? (
+            {wardLoading ? (
+              <View style={styles.wardLoading}>
+                <SkeletonCard />
+                <SkeletonStatsGrid />
+                <SkeletonCard />
+              </View>
+            ) : selectedWard && wardSummary ? (
               <>
                 {/* Ward Hero Card */}
                 <AnimatedSection index={1}>
@@ -303,28 +298,28 @@ export default function ParentDashboard() {
                 {/* Stats Grid */}
                 <AnimatedSection index={2}>
                   <View style={[styles.statsGrid, tabletLayout && styles.statsGridTablet]}>
-                    <ProgressCard
+                    <StatCard
                       label="Attendance"
                       value={`${wardSummary.attendance_rate}%`}
                       icon="checkmark-circle-outline"
                       iconColor={colors.success}
                       progressPercent={wardSummary.attendance_rate}
                     />
-                    <ProgressCard
+                    <StatCard
                       label="Homework"
                       value={wardSummary.pending_homework}
                       subtitle="pending"
                       icon="document-text-outline"
                       iconColor={colors.warning}
                     />
-                    <ProgressCard
+                    <StatCard
                       label="Goals"
                       value={wardSummary.active_goals}
                       subtitle="active"
                       icon="trophy-outline"
                       iconColor={colors.primary}
                     />
-                    <ProgressCard
+                    <StatCard
                       label="Alerts"
                       value={wardSummary.unread_notifications}
                       subtitle="unread"
@@ -336,23 +331,17 @@ export default function ParentDashboard() {
 
                 {/* Upcoming Lessons */}
                 <AnimatedSection index={3}>
-                  <View style={styles.sectionHeader}>
-                    <View>
-                      <AppText variant="subtitle">Upcoming Lessons</AppText>
-                      <AppText variant="caption" color="textSecondary">
-                        Next sessions for {selectedWard.full_name?.split(' ')[0] || 'your ward'}
-                      </AppText>
-                    </View>
-                    <SecondaryButton
-                      title="All"
-                      onPress={() => router.push('/(parent)/lessons')}
-                    />
-                  </View>
-                  {wardSummary.upcoming_lessons.length > 0 ? (
-                    <View style={styles.lessonList}>
-                      {wardSummary.upcoming_lessons.slice(0, 3).map((lesson) => (
-                        <BaseCard key={lesson.id} style={styles.lessonCard} elevation="sm">
-                          <View style={styles.lessonRow}>
+                  <SectionCard
+                    title="Upcoming Lessons"
+                    subtitle={`Next sessions for ${selectedWard.full_name?.split(' ')[0] || 'your ward'}`}
+                    headerRight={
+                      <SecondaryButton title="All" onPress={() => router.push('/(parent)/lessons')} />
+                    }
+                  >
+                    {wardSummary.upcoming_lessons.length > 0 ? (
+                      <View style={styles.lessonList}>
+                        {wardSummary.upcoming_lessons.slice(0, 3).map((lesson) => (
+                          <View key={lesson.id} style={styles.lessonItem}>
                             <View style={styles.lessonIcon}>
                               <Ionicons name="book-outline" size={18} color={colors.primary} />
                             </View>
@@ -366,81 +355,72 @@ export default function ParentDashboard() {
                             </View>
                             <LessonStatusBadge status={lesson.status} size="small" />
                           </View>
-                        </BaseCard>
-                      ))}
-                    </View>
-                  ) : (
-                    <BaseCard style={styles.emptyLessons} elevation="sm">
-                      <Ionicons name="calendar-outline" size={28} color={colors.textTertiary} />
-                      <AppText variant="bodySmall" color="textSecondary" style={styles.emptyText}>
-                        No upcoming lessons scheduled
-                      </AppText>
-                    </BaseCard>
-                  )}
+                        ))}
+                      </View>
+                    ) : (
+                      <View style={styles.emptyInline}>
+                        <Ionicons name="calendar-outline" size={28} color={colors.textTertiary} />
+                        <AppText variant="bodySmall" color="textSecondary" style={styles.emptyText}>
+                          No upcoming lessons scheduled
+                        </AppText>
+                      </View>
+                    )}
+                  </SectionCard>
                 </AnimatedSection>
 
                 {/* Active Subjects */}
                 <AnimatedSection index={4}>
-                  <View style={styles.sectionHeader}>
-                    <View>
-                      <AppText variant="subtitle">Enrolled Subjects</AppText>
-                      <AppText variant="caption" color="textSecondary">
-                        Current subjects and tutors
-                      </AppText>
-                    </View>
-                  </View>
-                  {wardSummary.active_subjects.length > 0 ? (
-                    <View style={styles.subjectList}>
-                      {wardSummary.active_subjects.map((subject) => (
-                        <BaseCard
-                          key={subject.id}
-                          style={styles.subjectCard}
-                          elevation="sm"
-                          pressable
-                          onPress={() =>
-                            router.push({
-                              pathname: '/(parent)/tutor-detail',
-                              params: { tutorId: subject.tutor_id, wardId: selectedWard.id },
-                            })
-                          }
-                        >
-                          <View style={styles.subjectRow}>
-                            <View style={styles.subjectIcon}>
-                              <Ionicons name="book-outline" size={18} color={colors.secondary} />
-                            </View>
-                            <View style={styles.subjectInfo}>
-                              <AppText variant="body" style={styles.subjectName}>
-                                {subject.name}
-                              </AppText>
-                              <AppText variant="caption" color="textSecondary" numberOfLines={1}>
-                                {subject.tutor_name}
-                              </AppText>
-                            </View>
-                            <View style={styles.subjectProgress}>
-                              <AppText variant="caption" color="textSecondary">
-                                {subject.lessons_completed}/{subject.lessons_total}
-                              </AppText>
-                              <View style={styles.progressBar}>
-                                <View
-                                  style={[
-                                    styles.progressFill,
-                                    { width: `${subject.progress_percent}%` },
-                                  ]}
-                                />
+                  <SectionCard title="Enrolled Subjects" subtitle="Current subjects and tutors">
+                    {wardSummary.active_subjects.length > 0 ? (
+                      <View style={styles.subjectList}>
+                        {wardSummary.active_subjects.map((subject) => (
+                          <Pressable
+                            key={subject.id}
+                            onPress={() =>
+                              router.push({
+                                pathname: '/(parent)/tutor-detail',
+                                params: { tutorId: subject.tutor_id, wardId: selectedWard.id },
+                              })
+                            }
+                          >
+                            <View style={styles.subjectItem}>
+                              <View style={styles.subjectIcon}>
+                                <Ionicons name="book-outline" size={18} color={colors.secondary} />
+                              </View>
+                              <View style={styles.subjectInfo}>
+                                <AppText variant="body" style={styles.subjectName}>
+                                  {subject.name}
+                                </AppText>
+                                <AppText variant="caption" color="textSecondary" numberOfLines={1}>
+                                  {subject.tutor_name}
+                                </AppText>
+                              </View>
+                              <View style={styles.subjectProgress}>
+                                <AppText variant="caption" color="textSecondary">
+                                  {subject.lessons_completed}/{subject.lessons_total}
+                                </AppText>
+                                <View style={styles.progressBar}>
+                                  <View
+                                    style={[
+                                      styles.progressFill,
+                                      { width: `${subject.progress_percent}%` },
+                                    ]}
+                                  />
+                                </View>
                               </View>
                             </View>
-                          </View>
-                        </BaseCard>
-                      ))}
-                    </View>
-                  ) : (
-                    <BaseCard style={styles.emptyLessons} elevation="sm">
-                      <Ionicons name="book-outline" size={28} color={colors.textTertiary} />
-                      <AppText variant="bodySmall" color="textSecondary" style={styles.emptyText}>
-                        No subjects enrolled yet
-                      </AppText>
-                    </BaseCard>
-                  )}
+                          </Pressable>
+                        ))}
+                      </View>
+                    ) : (
+                      <View style={styles.emptyInline}>
+                        <Ionicons name="book-outline" size={28} color={colors.textTertiary} />
+                        <AppText variant="bodySmall" color="textSecondary" style={styles.emptyText}>
+                          No subjects enrolled yet
+                        </AppText>
+                      </View>
+                    )}
+                  </SectionCard>
                 </AnimatedSection>
 
                 {/* Quick Actions */}
@@ -449,7 +429,6 @@ export default function ParentDashboard() {
                     <PrimaryButton
                       title="View All Lessons"
                       onPress={() => router.push('/(parent)/lessons')}
-                      leftIcon="calendar-outline"
                       containerStyle={styles.quickBtn}
                     />
                     <SecondaryButton
@@ -460,15 +439,6 @@ export default function ParentDashboard() {
                   </View>
                 </AnimatedSection>
               </>
-            ) : wardLoading ? (
-              <StateRenderer
-                status="loading"
-                error={null}
-                onRetry={handleRefresh}
-                loadingMessage="Loading ward data..."
-              >
-                {() => null}
-              </StateRenderer>
             ) : null}
           </>
         )}
@@ -484,6 +454,15 @@ const styles = StyleSheet.create({
   },
   screenContent: {
     flex: 1,
+  },
+  skeletonHeader: {
+    height: 140,
+    backgroundColor: colors.primary,
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
+  },
+  skeletonBody: {
+    padding: spacing.lg,
   },
   heroWrap: {
     position: 'absolute',
@@ -560,6 +539,9 @@ const styles = StyleSheet.create({
   wardDetailBtn: {
     padding: spacing.xs,
   },
+  wardLoading: {
+    gap: spacing.sm,
+  },
   statsGrid: {
     flexDirection: 'row',
     gap: spacing.sm,
@@ -568,25 +550,14 @@ const styles = StyleSheet.create({
   statsGridTablet: {
     gap: spacing.md,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-    marginTop: spacing.sm,
-  },
   lessonList: {
     gap: spacing.sm,
   },
-  lessonCard: {
-    borderRadius: radius.lg,
-  padding: spacing.md,
-  marginBottom: spacing.xs,
-  },
-  lessonRow: {
+  lessonItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   lessonIcon: {
     width: 36,
@@ -602,10 +573,9 @@ const styles = StyleSheet.create({
   lessonSubject: {
     fontWeight: '600',
   },
-  emptyLessons: {
+  emptyInline: {
     alignItems: 'center',
-    padding: spacing.xl,
-    borderRadius: radius.lg,
+    padding: spacing.lg,
   },
   emptyText: {
     marginTop: spacing.sm,
@@ -613,15 +583,11 @@ const styles = StyleSheet.create({
   subjectList: {
     gap: spacing.sm,
   },
-  subjectCard: {
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    marginBottom: spacing.xs,
-  },
-  subjectRow: {
+  subjectItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   subjectIcon: {
     width: 36,

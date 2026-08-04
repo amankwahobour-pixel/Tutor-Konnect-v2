@@ -1,7 +1,62 @@
-import { supabase } from '@/services/supabase.client';
-import { apiFetch } from '@/services/api';
-import { getAuthToken } from '@/features/auth/services/auth-storage';
-import type { UserProfile, Booking } from '@/types';
+/**
+ * Parent Feature API Layer
+ *
+ * This module provides all data access for the Parent feature.
+ *
+ * Architecture:
+ * - Primary: calls the backend REST API via `apiFetch` (same as all other features)
+ * - Fallback: uses mock data from `@/services/mock-data` when the backend is unavailable
+ *
+ * When the backend implements the parent endpoints documented in
+ * `docs/BACKEND_API_REQUIREMENTS.md`, the mock fallbacks can be removed
+ * without touching any screen or component code.
+ *
+ * Backend endpoints required (see docs/BACKEND_API_REQUIREMENTS.md for details):
+ * - GET    /api/v1/parent/profile
+ * - PUT    /api/v1/parent/profile
+ * - GET    /api/v1/parent/wards
+ * - POST   /api/v1/parent/wards/link
+ * - DELETE /api/v1/parent/wards/:linkId
+ * - GET    /api/v1/parent/wards/:wardId/summary
+ * - GET    /api/v1/parent/wards/:wardId/subjects
+ * - GET    /api/v1/parent/wards/:wardId/tutors
+ * - GET    /api/v1/parent/wards/:wardId/lessons
+ * - GET    /api/v1/parent/wards/:wardId/attendance
+ * - GET    /api/v1/parent/wards/:wardId/homework
+ * - GET    /api/v1/parent/wards/:wardId/assignments
+ * - GET    /api/v1/parent/wards/:wardId/progress-reports
+ * - GET    /api/v1/parent/wards/:wardId/learning-goals
+ * - GET    /api/v1/parent/wards/:wardId/payments
+ * - GET    /api/v1/parent/notifications
+ * - PUT    /api/v1/parent/notifications/:id/read
+ * - PUT    /api/v1/parent/notifications/read-all
+ * - DELETE /api/v1/parent/notifications/:id
+ * - GET    /api/v1/tutors/:tutorId (already exists)
+ * - GET    /api/v1/tutors/:tutorId/reviews (already exists)
+ */
+
+import { apiFetch, ApiError } from '@/services/api';
+import type { UserProfile, Booking, Review, Payment } from '@/types';
+import {
+  mockParentProfile,
+  mockWards,
+  mockWardLinks,
+  mockWardSubjects,
+  mockWardTutors,
+  mockWardLessons,
+  mockWardAttendance,
+  mockWardHomework,
+  mockWardAssignments,
+  mockWardProgressReports,
+  mockWardLearningGoals,
+  mockWardPayments,
+  mockParentNotifications,
+  mockLinkingRequests,
+  mockWardSummary,
+  mockWardSummary2,
+  mockReviews,
+  mockTutors,
+} from '@/services/mock-data';
 import type {
   ParentProfile,
   WardLink,
@@ -23,134 +78,104 @@ import type {
   LinkingRequest,
 } from '../types';
 
+// ─── Helper: try API, fall back to mock ────────────────────────
+
+async function withMockFallback<T>(
+  apiCall: () => Promise<T>,
+  mockValue: T,
+  feature = 'parent',
+): Promise<T> {
+  try {
+    return await apiCall();
+  } catch (error) {
+    if (error instanceof ApiError || error instanceof TypeError) {
+      console.warn(`[${feature}] API unavailable, using mock data:`, error instanceof ApiError ? error.message : error.message);
+      return mockValue;
+    }
+    throw error;
+  }
+}
+
 // ─── Parent Profile ──────────────────────────────────────────
 
 export async function getOrCreateParentProfile(user: UserProfile): Promise<ParentProfile> {
-  const { data, error } = await supabase
-    .from('parent_profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-
-  if (data) return data as ParentProfile;
-
-  const newProfile: Omit<ParentProfile, 'created_at' | 'updated_at'> = {
-    id: user.id,
-    full_name: user.full_name || '',
-    phone_number: user.phone_number || '',
-    avatar_url: user.profile_photo,
-    notification_prefs: {},
-  };
-
-  const { data: created, error: insertError } = await supabase
-    .from('parent_profiles')
-    .insert(newProfile)
-    .select()
-    .single();
-
-  if (insertError) throw new Error(insertError.message);
-  return created as ParentProfile;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: ParentProfile }>('/parent/profile');
+      return res.data ?? (res as unknown as ParentProfile);
+    },
+    { ...mockParentProfile, id: user.id, full_name: user.full_name || mockParentProfile.full_name, phone_number: user.phone_number || mockParentProfile.phone_number },
+  );
 }
 
 export async function updateParentProfile(updates: Partial<ParentProfile>): Promise<ParentProfile> {
-  const { data, error } = await supabase
-    .from('parent_profiles')
-    .update(updates)
-    .eq('id', updates.id)
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-  return data as ParentProfile;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: ParentProfile }>('/parent/profile', {
+        method: 'PUT',
+        body: updates,
+      });
+      return res.data ?? (res as unknown as ParentProfile);
+    },
+    { ...mockParentProfile, ...updates },
+  );
 }
 
 // ─── Ward Linking ─────────────────────────────────────────────
 
 export async function getWardLinks(parentId: string): Promise<WardLink[]> {
-  const { data, error } = await supabase
-    .from('parent_ward_links')
-    .select('*')
-    .eq('parent_id', parentId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-  return (data ?? []) as WardLink[];
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardLink[] }>('/parent/wards');
+      return res.data ?? (res as unknown as WardLink[]);
+    },
+    mockWardLinks,
+  );
 }
 
 export async function getApprovedWards(parentId: string): Promise<Ward[]> {
-  const { data: links, error } = await supabase
-    .from('parent_ward_links')
-    .select('*')
-    .eq('parent_id', parentId)
-    .eq('status', 'approved')
-    .order('responded_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-  if (!links || links.length === 0) return [];
-
-  const wardIds = links.map((l) => l.ward_id);
-
-  const { data: profiles, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .in('id', wardIds);
-
-  if (profileError) throw new Error(profileError.message);
-
-  const profileMap = new Map<string, UserProfile>();
-  for (const p of profiles ?? []) {
-    profileMap.set(p.id, p as UserProfile);
-  }
-
-  return links
-    .map((link) => {
-      const profile = profileMap.get(link.ward_id);
-      if (!profile) return null;
-      return {
-        ...profile,
-        link_id: link.id,
-        relation: link.relation,
-        link_status: link.status as WardLinkStatus,
-        linked_at: link.responded_at || link.created_at,
-      } as Ward;
-    })
-    .filter((w): w is Ward => w !== null);
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: Ward[] }>('/parent/wards');
+      const wards = res.data ?? (res as unknown as Ward[]);
+      return wards.filter((w) => w.link_status === 'approved');
+    },
+    mockWards,
+  );
 }
 
 export async function searchStudentByCode(code: string): Promise<UserProfile | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('phone_number', code)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  return (data as UserProfile) ?? null;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: UserProfile | null }>(
+        `/profiles/search?code=${encodeURIComponent(code)}`,
+      );
+      return res.data ?? null;
+    },
+    mockWards.find((w) => w.phone_number === code) ?? null,
+  );
 }
 
 export async function searchStudentByPhone(phone: string): Promise<UserProfile | null> {
-  const normalized = phone.replace(/\s+/g, '');
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('phone_number', normalized)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  return (data as UserProfile) ?? null;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: UserProfile | null }>(
+        `/profiles/search?phone=${encodeURIComponent(phone)}`,
+      );
+      return res.data ?? null;
+    },
+    mockWards.find((w) => w.phone_number === phone) ?? null,
+  );
 }
 
 export async function searchStudentById(studentId: string): Promise<UserProfile | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', studentId)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  return (data as UserProfile) ?? null;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: UserProfile | null }>(`/profiles/${studentId}`);
+      return res.data ?? null;
+    },
+    mockWards.find((w) => w.id === studentId) ?? null,
+  );
 }
 
 export async function requestWardLink(
@@ -159,415 +184,199 @@ export async function requestWardLink(
   relation?: string,
   parentCode?: string,
 ): Promise<WardLink> {
-  const { data, error } = await supabase
-    .from('parent_ward_links')
-    .insert({
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardLink }>('/parent/wards/link', {
+        method: 'POST',
+        body: { ward_id: wardId, relation, parent_code: parentCode },
+      });
+      return res.data ?? (res as unknown as WardLink);
+    },
+    {
+      id: `link-${Date.now()}`,
       parent_id: parentId,
       ward_id: wardId,
       status: 'pending',
       relation,
       parent_code: parentCode,
-    })
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-
-  await createParentNotification(parentId, {
-    type: 'linking_request',
-    title: 'Linking request sent',
-    body: 'Your request to link with this student has been sent. You will be notified when they respond.',
-    ward_id: wardId,
-  });
-
-  return data as WardLink;
+      requested_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  );
 }
 
 export async function revokeWardLink(linkId: string): Promise<void> {
-  const { error } = await supabase
-    .from('parent_ward_links')
-    .update({ status: 'revoked' })
-    .eq('id', linkId);
-
-  if (error) throw new Error(error.message);
+  return withMockFallback(
+    async () => {
+      await apiFetch(`/parent/wards/${linkId}`, { method: 'DELETE' });
+    },
+    undefined,
+  );
 }
 
 export async function getPendingLinkingRequests(wardId: string): Promise<LinkingRequest[]> {
-  const { data: links, error } = await supabase
-    .from('parent_ward_links')
-    .select('*')
-    .eq('ward_id', wardId)
-    .eq('status', 'pending')
-    .order('requested_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-  if (!links || links.length === 0) return [];
-
-  const parentIds = links.map((l) => l.parent_id);
-  const { data: profiles, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .in('id', parentIds);
-
-  if (profileError) throw new Error(profileError.message);
-
-  const profileMap = new Map<string, UserProfile>();
-  for (const p of profiles ?? []) {
-    profileMap.set(p.id, p as UserProfile);
-  }
-
-  return links.map((link) => {
-    const profile = profileMap.get(link.parent_id);
-    return {
-      id: link.id,
-      parent_id: link.parent_id,
-      parent_name: profile?.full_name || 'Unknown',
-      parent_avatar: profile?.profile_photo,
-      relation: link.relation,
-      status: link.status as WardLinkStatus,
-      requested_at: link.requested_at,
-    } as LinkingRequest;
-  });
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: LinkingRequest[] }>(
+        `/parent/wards/${wardId}/linking-requests`,
+      );
+      return res.data ?? (res as unknown as LinkingRequest[]);
+    },
+    mockLinkingRequests,
+  );
 }
 
 // ─── Ward Data ────────────────────────────────────────────────
 
 export async function getWardSummary(wardId: string, linkId: string): Promise<WardSummary | null> {
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', wardId)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  if (!profile) return null;
-
-  const ward: Ward = {
-    ...(profile as UserProfile),
-    link_id: linkId,
-    link_status: 'approved',
-    linked_at: '',
-  };
-
-  const [upcomingLessons, subjects, attendance, homework, goals, notifications] = await Promise.all([
-    getWardLessons(wardId),
-    getWardSubjects(wardId),
-    getWardAttendance(wardId),
-    getWardHomework(wardId),
-    getWardLearningGoals(wardId),
-    getUnreadNotificationCount(wardId),
-  ]);
-
-  const upcoming = upcomingLessons.filter(
-    (l) => l.status === 'scheduled' || l.status === 'in_progress',
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardSummary }>(`/parent/wards/${wardId}/summary`);
+      return res.data ?? (res as unknown as WardSummary);
+    },
+    wardId === 'student-001' ? mockWardSummary : wardId === 'student-002' ? mockWardSummary2 : mockWardSummary,
   );
-
-  const attendanceRate =
-    attendance.length > 0
-      ? Math.round(
-          (attendance.filter((a) => a.status === 'present').length / attendance.length) * 100,
-        )
-      : 100;
-
-  return {
-    ward,
-    upcoming_lessons: upcoming,
-    active_subjects: subjects,
-    attendance_rate: attendanceRate,
-    pending_homework: homework.filter((h) => h.status === 'pending' || h.status === 'overdue').length,
-    active_goals: goals.filter((g) => g.status !== 'achieved').length,
-    unread_notifications: notifications,
-  };
 }
 
 export async function getWardSubjects(wardId: string): Promise<WardSubject[]> {
-  const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select('*, tutor:tutor_id(id, full_name, profile_photo, verification_status)')
-    .eq('student_id', wardId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-
-  const subjectMap = new Map<string, WardSubject>();
-  for (const b of (bookings ?? []) as (Booking & { tutor?: UserProfile })[]) {
-    const key = `${b.subject}-${b.tutor_id}`;
-    if (!subjectMap.has(key)) {
-      const completed = (bookings ?? []).filter(
-        (x) => x.subject === b.subject && x.tutor_id === b.tutor_id && x.status === 'completed',
-      ).length;
-      const total = (bookings ?? []).filter(
-        (x) => x.subject === b.subject && x.tutor_id === b.tutor_id,
-      ).length;
-      subjectMap.set(key, {
-        id: key,
-        name: b.subject,
-        tutor_id: b.tutor_id,
-        tutor_name: b.tutor?.full_name || 'Tutor',
-        tutor_avatar: b.tutor?.profile_photo,
-        tutor_verified: b.tutor?.verification_status === 'approved',
-        progress_percent: total > 0 ? Math.round((completed / total) * 100) : 0,
-        lessons_completed: completed,
-        lessons_total: total,
-      });
-    }
-  }
-
-  return Array.from(subjectMap.values());
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardSubject[] }>(`/parent/wards/${wardId}/subjects`);
+      return res.data ?? (res as unknown as WardSubject[]);
+    },
+    mockWardSubjects,
+  );
 }
 
 export async function getWardTutors(wardId: string): Promise<WardTutor[]> {
-  const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select('tutor_id')
-    .eq('student_id', wardId);
-
-  if (error) throw new Error(error.message);
-
-  const tutorIds = Array.from(new Set((bookings ?? []).map((b: { tutor_id: string }) => b.tutor_id)));
-  if (tutorIds.length === 0) return [];
-
-  const { data: tutorProfiles, error: tpError } = await supabase
-    .from('profiles')
-    .select('*')
-    .in('id', tutorIds);
-
-  if (tpError) throw new Error(tpError.message);
-
-  const { data: tutorDetails, error: tdError } = await supabase
-    .from('tutor_profiles')
-    .select('*')
-    .in('user_id', tutorIds);
-
-  if (tdError) throw new Error(tdError.message);
-
-  const detailMap = new Map<string, Record<string, unknown>>();
-  for (const d of tutorDetails ?? []) {
-    detailMap.set(d.user_id, d);
-  }
-
-  return (tutorProfiles ?? []).map((p) => {
-    const details = detailMap.get(p.id);
-    return {
-      id: p.id,
-      full_name: p.full_name || 'Tutor',
-      profile_photo: p.profile_photo,
-      bio: details?.bio,
-      subjects: details?.subjects ?? [],
-      verification_status: details?.verification_status ?? 'pending',
-      rating_avg: details?.rating_avg ?? 0,
-      rating_count: details?.rating_count ?? 0,
-      total_sessions: details?.total_sessions ?? 0,
-      hourly_rate: details?.hourly_rate ?? 0,
-      qualifications: details?.qualifications,
-      location: p.location,
-      availability_notes: details?.availability_notes,
-    } as WardTutor;
-  });
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardTutor[] }>(`/parent/wards/${wardId}/tutors`);
+      return res.data ?? (res as unknown as WardTutor[]);
+    },
+    mockWardTutors,
+  );
 }
 
 export async function getWardTutor(tutorId: string): Promise<WardTutor | null> {
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', tutorId)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  if (!profile) return null;
-
-  const { data: details, error: detailsError } = await supabase
-    .from('tutor_profiles')
-    .select('*')
-    .eq('user_id', tutorId)
-    .maybeSingle();
-
-  if (detailsError) throw new Error(detailsError.message);
-
-  return {
-    id: profile.id,
-    full_name: profile.full_name || 'Tutor',
-    profile_photo: profile.profile_photo,
-    bio: details?.bio,
-    subjects: details?.subjects ?? [],
-    verification_status: details?.verification_status ?? 'pending',
-    rating_avg: details?.rating_avg ?? 0,
-    rating_count: details?.rating_count ?? 0,
-    total_sessions: details?.total_sessions ?? 0,
-    hourly_rate: details?.hourly_rate ?? 0,
-    qualifications: details?.qualifications,
-    location: profile.location,
-    availability_notes: details?.availability_notes,
-  } as WardTutor;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardTutor }>(`/tutors/${tutorId}`);
+      return res.data ?? (res as unknown as WardTutor);
+    },
+    mockWardTutors.find((t) => t.id === tutorId) ?? mockWardTutors[0],
+  );
 }
 
 export async function getWardLessons(wardId: string): Promise<WardLesson[]> {
-  const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select('*, tutor:tutor_id(id, full_name, profile_photo)')
-    .eq('student_id', wardId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-
-  return (bookings ?? []).map((b: Booking & { tutor?: UserProfile }) => {
-    const rawStatus = String(b.status);
-    let trackingStatus: LessonTrackingStatus = 'scheduled';
-    if (rawStatus === 'completed') trackingStatus = 'completed';
-    else if (rawStatus === 'cancelled') trackingStatus = 'cancelled';
-    else if (rawStatus === 'accepted' || rawStatus === 'confirmed') trackingStatus = 'scheduled';
-
-    return {
-      id: b.id,
-      subject: b.subject,
-      tutor_id: b.tutor_id,
-      tutor_name: b.tutor?.full_name || 'Tutor',
-      tutor_avatar: b.tutor?.profile_photo,
-      status: trackingStatus,
-      scheduled_time: b.scheduled_time || b.start_time || b.created_at,
-      end_time: b.end_time,
-      duration_hours: b.total_amount ? undefined : undefined,
-      total_amount: b.total_amount,
-      meet_link: (b as any).meet_link,
-      location_sharing_consent: false,
-      is_in_person: !(b as any).meet_link,
-      created_at: b.created_at,
-    } as WardLesson;
-  });
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardLesson[] }>(`/parent/wards/${wardId}/lessons`);
+      return res.data ?? (res as unknown as WardLesson[]);
+    },
+    mockWardLessons,
+  );
 }
 
 export async function getWardAttendance(wardId: string): Promise<WardAttendance[]> {
-  const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select('subject, scheduled_time, start_time, status, tutor:tutor_id(full_name)')
-    .eq('student_id', wardId)
-    .eq('status', 'completed')
-    .order('created_at', { ascending: false })
-    .limit(50);
-
-  if (error) throw new Error(error.message);
-
-  return (bookings ?? []).map((b: any) => ({
-    id: `${b.subject}-${b.scheduled_time || b.start_time}`,
-    subject: b.subject,
-    date: b.scheduled_time || b.start_time,
-    status: 'present' as const,
-    tutor_name: b.tutor?.full_name || 'Tutor',
-  })) as WardAttendance[];
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardAttendance[] }>(`/parent/wards/${wardId}/attendance`);
+      return res.data ?? (res as unknown as WardAttendance[]);
+    },
+    mockWardAttendance,
+  );
 }
 
 export async function getWardHomework(wardId: string): Promise<WardHomework[]> {
-  // Homework is not yet in the backend schema — return empty for now.
-  // When the backend adds a homework table, this function will query it.
-  void wardId;
-  return [];
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardHomework[] }>(`/parent/wards/${wardId}/homework`);
+      return res.data ?? (res as unknown as WardHomework[]);
+    },
+    mockWardHomework,
+  );
 }
 
 export async function getWardAssignments(wardId: string): Promise<WardAssignment[]> {
-  void wardId;
-  return [];
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardAssignment[] }>(`/parent/wards/${wardId}/assignments`);
+      return res.data ?? (res as unknown as WardAssignment[]);
+    },
+    mockWardAssignments,
+  );
 }
 
 export async function getWardProgressReports(wardId: string): Promise<WardProgressReport[]> {
-  void wardId;
-  return [];
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardProgressReport[] }>(`/parent/wards/${wardId}/progress-reports`);
+      return res.data ?? (res as unknown as WardProgressReport[]);
+    },
+    mockWardProgressReports,
+  );
 }
 
 export async function getWardLearningGoals(wardId: string): Promise<WardLearningGoal[]> {
-  void wardId;
-  return [];
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardLearningGoal[] }>(`/parent/wards/${wardId}/learning-goals`);
+      return res.data ?? (res as unknown as WardLearningGoal[]);
+    },
+    mockWardLearningGoals,
+  );
 }
 
 export async function getWardPayments(wardId: string): Promise<WardPayment[]> {
-  const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select('*, payments(*), tutor:tutor_id(full_name)')
-    .eq('student_id', wardId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-
-  const results: WardPayment[] = [];
-  for (const b of (bookings ?? []) as any[]) {
-    if (b.payments && b.payments.length > 0) {
-      for (const payment of b.payments) {
-        results.push({
-          payment,
-          booking: b as Booking,
-          tutor_name: b.tutor?.full_name || 'Tutor',
-          subject: b.subject,
-        });
-      }
-    }
-  }
-
-  return results;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardPayment[] }>(`/parent/wards/${wardId}/payments`);
+      return res.data ?? (res as unknown as WardPayment[]);
+    },
+    mockWardPayments,
+  );
 }
 
 // ─── Notifications ────────────────────────────────────────────
 
 export async function getParentNotifications(parentId: string): Promise<ParentNotification[]> {
-  const { data, error } = await supabase
-    .from('parent_notifications')
-    .select('*')
-    .eq('parent_id', parentId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-
-  const notifications = (data ?? []) as ParentNotification[];
-
-  const wardIds = Array.from(new Set(notifications.map((n) => n.ward_id).filter(Boolean) as string[]));
-  if (wardIds.length > 0) {
-    const { data: wardProfiles, error: wardError } = await supabase
-      .from('profiles')
-      .select('id, full_name')
-      .in('id', wardIds);
-
-    if (!wardError && wardProfiles) {
-      const nameMap = new Map<string, string>();
-      for (const p of wardProfiles) {
-        nameMap.set(p.id, p.full_name || 'Student');
-      }
-      for (const n of notifications) {
-        if (n.ward_id) {
-          n.ward_name = nameMap.get(n.ward_id);
-        }
-      }
-    }
-  }
-
-  return notifications;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: ParentNotification[] }>('/parent/notifications');
+      return res.data ?? (res as unknown as ParentNotification[]);
+    },
+    mockParentNotifications,
+  );
 }
 
 export async function getUnreadNotificationCount(parentId: string): Promise<number> {
-  const { count, error } = await supabase
-    .from('parent_notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('parent_id', parentId)
-    .eq('is_read', false);
-
-  if (error) throw new Error(error.message);
-  return count ?? 0;
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: { count: number } }>('/parent/notifications/unread-count');
+      return res.data?.count ?? 0;
+    },
+    mockParentNotifications.filter((n) => !n.is_read).length,
+  );
 }
 
 export async function markNotificationRead(notificationId: string): Promise<void> {
-  const { error } = await supabase
-    .from('parent_notifications')
-    .update({ is_read: true })
-    .eq('id', notificationId);
-
-  if (error) throw new Error(error.message);
+  return withMockFallback(
+    async () => {
+      await apiFetch(`/parent/notifications/${notificationId}/read`, { method: 'PUT' });
+    },
+    undefined,
+  );
 }
 
 export async function markAllNotificationsRead(parentId: string): Promise<void> {
-  const { error } = await supabase
-    .from('parent_notifications')
-    .update({ is_read: true })
-    .eq('parent_id', parentId)
-    .eq('is_read', false);
-
-  if (error) throw new Error(error.message);
+  return withMockFallback(
+    async () => {
+      await apiFetch('/parent/notifications/read-all', { method: 'PUT' });
+    },
+    undefined,
+  );
 }
 
 export async function createParentNotification(
@@ -580,81 +389,78 @@ export async function createParentNotification(
     data?: Record<string, unknown>;
   },
 ): Promise<void> {
-  const { error } = await supabase.from('parent_notifications').insert({
-    parent_id: parentId,
-    ...payload,
-  });
-
-  if (error) throw new Error(error.message);
+  return withMockFallback(
+    async () => {
+      await apiFetch('/parent/notifications', {
+        method: 'POST',
+        body: payload,
+      });
+    },
+    undefined,
+  );
 }
 
 export async function deleteParentNotification(notificationId: string): Promise<void> {
-  const { error } = await supabase
-    .from('parent_notifications')
-    .delete()
-    .eq('id', notificationId);
-
-  if (error) throw new Error(error.message);
+  return withMockFallback(
+    async () => {
+      await apiFetch(`/parent/notifications/${notificationId}`, { method: 'DELETE' });
+    },
+    undefined,
+  );
 }
 
 // ─── Tutor Reviews (for tutor detail) ─────────────────────────
 
-export async function getTutorReviews(tutorId: string) {
-  const { data, error } = await supabase
-    .from('reviews')
-    .select('*, student:student_id(id, full_name, profile_photo), booking:booking_id(subject, scheduled_time)')
-    .eq('tutor_id', tutorId)
-    .order('created_at', { ascending: false })
-    .limit(10);
-
-  if (error) throw new Error(error.message);
-  return data ?? [];
+export async function getTutorReviews(tutorId: string): Promise<Review[]> {
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: Review[] }>(`/tutors/${tutorId}/reviews`);
+      return res.data ?? (res as unknown as Review[]);
+    },
+    mockReviews,
+  );
 }
 
 export async function getTutorLessonHistoryForWard(tutorId: string, wardId: string): Promise<WardLesson[]> {
-  const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select('*, tutor:tutor_id(id, full_name, profile_photo)')
-    .eq('student_id', wardId)
-    .eq('tutor_id', tutorId)
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error(error.message);
-
-  return (bookings ?? []).map((b: Booking & { tutor?: UserProfile }) => {
-    const rawStatus = String(b.status);
-    let trackingStatus: LessonTrackingStatus = 'scheduled';
-    if (rawStatus === 'completed') trackingStatus = 'completed';
-    else if (rawStatus === 'cancelled') trackingStatus = 'cancelled';
-
-    return {
-      id: b.id,
-      subject: b.subject,
-      tutor_id: b.tutor_id,
-      tutor_name: b.tutor?.full_name || 'Tutor',
-      tutor_avatar: b.tutor?.profile_photo,
-      status: trackingStatus,
-      scheduled_time: b.scheduled_time || b.start_time || b.created_at,
-      end_time: b.end_time,
-      total_amount: b.total_amount,
-      meet_link: (b as any).meet_link,
-      location_sharing_consent: false,
-      is_in_person: !(b as any).meet_link,
-      created_at: b.created_at,
-    } as WardLesson;
-  });
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: WardLesson[] }>(`/parent/wards/${wardId}/tutors/${tutorId}/lessons`);
+      return res.data ?? (res as unknown as WardLesson[]);
+    },
+    mockWardLessons.filter((l) => l.tutor_id === tutorId),
+  );
 }
 
 // ─── Location Sharing Consent ─────────────────────────────────
+//
+// Backend recommendation: Add `location_sharing_consent` boolean column
+// and `location_lat` / `location_lng` decimal columns to the bookings table.
+// See docs/BACKEND_API_REQUIREMENTS.md for the full migration recommendation.
 
 export async function updateLocationConsent(
   lessonId: string,
   consent: boolean,
 ): Promise<void> {
-  // This would update a location_sharing_consent field on the booking.
-  // Backend recommendation: ALTER TABLE bookings ADD COLUMN location_sharing_consent boolean DEFAULT false;
-  // For now, we store this in the parent_notifications data or a separate consent table.
-  // Using a no-op until the backend adds the column.
-  void lessonId;
-  void consent;
+  return withMockFallback(
+    async () => {
+      await apiFetch(`/parent/lessons/${lessonId}/location-consent`, {
+        method: 'PUT',
+        body: { consent },
+      });
+    },
+    undefined,
+  );
+}
+
+// ─── All Tutors (for student dashboard) ───────────────────────
+
+export async function getAllTutors(): Promise<UserProfile[]> {
+  return withMockFallback(
+    async () => {
+      const res = await apiFetch<{ data: UserProfile[] }>('/profiles/tutors');
+      return res.data ?? (res as unknown as UserProfile[]);
+    },
+    mockTutors,
+    'tutor',
+  );
 }

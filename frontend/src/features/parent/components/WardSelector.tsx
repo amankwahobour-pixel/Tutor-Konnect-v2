@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from '@/components/ui/Avatar';
 import { AppText } from '@/components/ui/AppText';
-import { Badge } from '@/components/ui/Badge';
 import { colors, radius, spacing } from '@/theme';
 import type { Ward } from '../types';
 
@@ -29,6 +28,8 @@ export function WardSelector({ wards, selectedWardId, onSelect, onAddWard }: War
               key={ward.id}
               style={[styles.chip, isSelected && styles.chipSelected]}
               onPress={() => onSelect(ward)}
+              accessibilityRole="button"
+              accessibilityLabel={`Select ${ward.full_name || 'ward'}`}
             >
               <Avatar
                 source={ward.profile_photo ? { uri: ward.profile_photo } : undefined}
@@ -45,7 +46,12 @@ export function WardSelector({ wards, selectedWardId, onSelect, onAddWard }: War
             </Pressable>
           );
         })}
-        <Pressable style={styles.addChip} onPress={onAddWard}>
+        <Pressable
+          style={styles.addChip}
+          onPress={onAddWard}
+          accessibilityRole="button"
+          accessibilityLabel="Add a new ward"
+        >
           <Ionicons name="add" size={20} color={colors.primary} />
           <AppText variant="bodySmall" style={styles.addText}>Add</AppText>
         </Pressable>
@@ -53,8 +59,6 @@ export function WardSelector({ wards, selectedWardId, onSelect, onAddWard }: War
     </View>
   );
 }
-
-import { ScrollView } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {

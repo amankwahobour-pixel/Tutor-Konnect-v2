@@ -1,37 +1,35 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { StyleSheet, View, RefreshControl, Pressable, ScrollView, Alert } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getApprovedWards, getWardLessons, updateLocationConsent } from '../api/parent.api';
 import { WardSelector, LessonStatusBadge } from '../components';
 import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
-import { Avatar } from '@/components/ui/Avatar';
 import { Screen } from '@/components/layout';
-import { StateRenderer, EmptyState } from '@/components/common';
+import { EmptyState, SectionCard } from '@/components/common';
 import { colors, radius, spacing } from '@/theme';
 import type { Ward, WardLesson, LessonTrackingStatus } from '../types';
 
-const statusFilters: { key: LessonTrackingStatus | 'all'; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'scheduled', label: 'Scheduled' },
-  { key: 'in_progress', label: 'In Progress' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'cancelled', label: 'Cancelled' },
-  { key: 'rescheduled', label: 'Rescheduled' },
+const statusFilters: { key: LessonTrackingStatus | 'all'; label: string; icon: string }[] = [
+  { key: 'all', label: 'All', icon: 'apps-outline' },
+  { key: 'scheduled', label: 'Scheduled', icon: 'calendar-outline' },
+  { key: 'in_progress', label: 'In Progress', icon: 'time-outline' },
+  { key: 'completed', label: 'Completed', icon: 'checkmark-circle-outline' },
+  { key: 'cancelled', label: 'Cancelled', icon: 'close-circle-outline' },
+  { key: 'rescheduled', label: 'Rescheduled', icon: 'swap-horizontal-outline' },
 ];
 
 export default function ParentLessonsScreen() {
   const { user } = useAuthContext();
-  const { wardId: paramWardId } = useLocalSearchParams<{ wardId?: string }>();
   const [wards, setWards] = useState<Ward[]>([]);
-  const [selectedWardId, setSelectedWardId] = useState<string | null>(paramWardId ?? null);
+  const [selectedWardId, setSelectedWardId] = useState<string | null>(null);
   const [lessons, setLessons] = useState<WardLesson[]>([]);
   const [activeFilter, setActiveFilter] = useState<LessonTrackingStatus | 'all'>('all');
   const [loading, setLoading] = useState(true);
   const [lessonsLoading, setLessonsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadWards = useCallback(async () => {
     if (!user?.id) return;
@@ -43,7 +41,7 @@ export default function ParentLessonsScreen() {
         setSelectedWardId(wardList[0].id);
       }
     } catch (err) {
-      setError(err as Error);
+      console.error('Failed to load wards', err);
     } finally {
       setLoading(false);
     }
@@ -82,7 +80,7 @@ export default function ParentLessonsScreen() {
     if (!lesson.is_in_person) return;
     Alert.alert(
       'Location Sharing',
-      `Share real-time location for "${lesson.subject}" with ${lesson.tutor_name}? Location is only shared during the active session and can be revoked anytime.`,
+      `Share real-time location for "${lesson.subject}" with ${lesson.tutor_name}?\n\nLocation is only shared during the active session and can be revoked anytime.`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -90,7 +88,7 @@ export default function ParentLessonsScreen() {
           onPress: async () => {
             try {
               await updateLocationConsent(lesson.id, true);
-              Alert.alert('Consent granted', 'Location sharing is now active for this session.');
+              Alert.alert('Consent Granted', 'Location sharing is now active for this session.');
             } catch {
               Alert.alert('Error', 'Could not update location sharing consent.');
             }
@@ -101,25 +99,16 @@ export default function ParentLessonsScreen() {
   };
 
   const handleRefresh = async () => {
+    setRefreshing(true);
     await Promise.all([loadWards(), loadLessons()]);
+    setRefreshing(false);
   };
 
   if (loading) {
     return (
       <Screen style={styles.screen}>
-        <StateRenderer status="loading" error={null} onRetry={handleRefresh} loadingMessage="Loading lessons...">
-          {() => null}
-        </StateRenderer>
-      </Screen>
-    );
-  }
-
-  if (error) {
-    return (
-      <Screen style={styles.screen}>
-        <StateRenderer status="error" error={error} onRetry={handleRefresh} errorTitle="Failed to load lessons">
-          {() => null}
-        </StateRenderer>
+        <View style={styles.skeletonHeader} />
+        <View style={styles.skeletonBody} />
       </Screen>
     );
   }
@@ -128,7 +117,7 @@ export default function ParentLessonsScreen() {
     return (
       <Screen style={styles.screen}>
         <EmptyState
-          icon="people-outline"
+          icon={<Ionicons name="people-outline" size={48} color={colors.primary} />}
           title="No wards linked"
           message="Link your child's account to view their lessons."
           actionLabel="Link a child"
@@ -140,8 +129,14 @@ export default function ParentLessonsScreen() {
 
   return (
     <Screen style={styles.screen} contentStyle={styles.content}>
+      {/* Header */}
       <View style={styles.header}>
-        <AppText variant="h2">Lessons</AppText>
+        <View>
+          <AppText variant="h2">Lessons</AppText>
+          <AppText variant="caption" color="textSecondary">
+            Track and monitor lesson progress
+          </AppText>
+        </View>
         <Pressable onPress={() => router.push('/(parent)/notifications')} style={styles.bellBtn}>
           <Ionicons name="notifications-outline" size={24} color={colors.text} />
         </Pressable>
@@ -155,13 +150,23 @@ export default function ParentLessonsScreen() {
       />
 
       {/* Status Filters */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={ false} style={styles.filterBar} contentContainerStyle={styles.filterContent}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterBar}
+        contentContainerStyle={styles.filterContent}
+      >
         {statusFilters.map((filter) => (
           <Pressable
             key={filter.key}
             style={[styles.filterChip, activeFilter === filter.key && styles.filterChipActive]}
             onPress={() => setActiveFilter(filter.key)}
           >
+            <Ionicons
+              name={filter.icon as any}
+              size={14}
+              color={activeFilter === filter.key ? colors.primary : colors.textTertiary}
+            />
             <AppText
               variant="caption"
               style={[styles.filterText, activeFilter === filter.key && styles.filterTextActive]}
@@ -174,7 +179,7 @@ export default function ParentLessonsScreen() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={lessonsLoading} onRefresh={handleRefresh} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
         contentContainerStyle={styles.lessonList}
       >
         {filteredLessons.length > 0 ? (
@@ -206,7 +211,7 @@ export default function ParentLessonsScreen() {
                     {new Date(lesson.scheduled_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </AppText>
                 </View>
-                {lesson.total_amount && (
+                {lesson.total_amount != null && (
                   <View style={styles.metaItem}>
                     <Ionicons name="cash-outline" size={14} color={colors.textTertiary} />
                     <AppText variant="caption" color="textSecondary">
@@ -230,7 +235,7 @@ export default function ParentLessonsScreen() {
                   style={styles.meetBtn}
                   onPress={() => {
                     if (lesson.meet_link) {
-                      Alert.alert('Meeting link', lesson.meet_link);
+                      Alert.alert('Meeting Link', lesson.meet_link);
                     }
                   }}
                 >
@@ -242,7 +247,7 @@ export default function ParentLessonsScreen() {
           ))
         ) : (
           <EmptyState
-            icon="calendar-outline"
+            icon={<Ionicons name="calendar-outline" size={48} color={colors.textTertiary} />}
             title="No lessons found"
             message={activeFilter === 'all' ? 'No lessons have been booked yet.' : `No ${activeFilter.replace('_', ' ')} lessons.`}
           />
@@ -258,6 +263,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   content: {
+    flex: 1,
+  },
+  skeletonHeader: {
+    height: 80,
+    backgroundColor: colors.primary,
+  },
+  skeletonBody: {
     flex: 1,
   },
   header: {
@@ -280,6 +292,9 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.full,
