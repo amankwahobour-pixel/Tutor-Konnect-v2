@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, spacing } from '@/theme';
+import { radius, spacing, type ColorPalette } from '@/theme';
 
-export default StyleSheet.create({
+export const styles = (colors: ColorPalette) => StyleSheet.create({
   cardWrapper: {
     width: '100%',
   },
@@ -74,3 +74,5 @@ export default StyleSheet.create({
     flex: 1,
   },
 });
+
+export default styles;

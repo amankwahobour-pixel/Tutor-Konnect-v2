@@ -7,10 +7,11 @@ import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Alert, Animated, Image, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/otp-verification.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/otp-verification.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function OTPVerificationScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const { setToken, setUser } = useAuthContext();
   const phone = Array.isArray(params.phone) ? params.phone[0] : params.phone;

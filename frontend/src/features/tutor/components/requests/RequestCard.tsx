@@ -7,7 +7,8 @@ import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import type { TutorRequest } from '@/types';
-import styles from './RequestCard.styles';
+import { styles as createStyles } from './RequestCard.styles';
+import { useThemedStyles } from '@/theme';
 
 interface RequestCardProps {
   request: TutorRequest;
@@ -16,6 +17,7 @@ interface RequestCardProps {
 }
 
 function RequestCard({ request, onAccept, onDecline }: RequestCardProps) {
+  const styles = useThemedStyles(createStyles);
   const studentName = typeof request.student === 'string' ? request.student : request.student?.full_name || 'Student';
   const avatarLetter = studentName.charAt(0).toUpperCase();
 

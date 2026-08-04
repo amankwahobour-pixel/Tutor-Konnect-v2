@@ -8,10 +8,11 @@ import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Alert, Image, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/profile-setup.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/profile-setup.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function ProfileSetupScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user, setUser } = useAuthContext();
   const [fullName, setFullName] = useState(user?.full_name ?? '');
   const [bio, setBio] = useState('');

@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, useWindowDimensions, View } from 'react-native';
 import { PrimaryButton, SecondaryButton } from '@/components';
 import { AppText } from '@/components/ui/AppText';
-import { styles } from '../styles/welcome.styles';
+import { styles as createStyles } from '../styles/welcome.styles';
+import { useThemedStyles } from '@/theme';
 
 const onboardingData = [
   {
@@ -33,6 +34,7 @@ const onboardingData = [
 ];
 
 export default function WelcomeScreen() {
+  const styles = useThemedStyles(createStyles);
   const { width } = useWindowDimensions();
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);

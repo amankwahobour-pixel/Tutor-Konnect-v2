@@ -7,13 +7,15 @@ import { AppText } from '@/components/ui/AppText';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getTutorRequests, acceptBooking, declineBooking } from '@/api/booking';
 import type { TutorRequest, ApiResponse } from '@/types';
-import { styles } from '../styles/requests.styles';
+import { styles as createStyles } from '../styles/requests.styles';
+import { useThemedStyles } from '@/theme';
 import RequestsHeader from '../components/requests/RequestsHeader';
 import RequestCard from '../components/requests/RequestCard';
 
 type FilterStatus = 'all' | 'pending' | 'accepted' | 'declined' | 'completed';
 
 export default function RequestsScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
   const [requests, setRequests] = useState<TutorRequest[]>([]);
   const [loading, setLoading] = useState(false);

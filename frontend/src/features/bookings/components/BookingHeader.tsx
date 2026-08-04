@@ -2,8 +2,8 @@ import React from 'react';
 import { Animated, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppText } from '@/components/ui/AppText';
-import { colors } from '@/theme';
-import styles from './BookingHeader.styles';
+import { colors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from './BookingHeader.styles';
 
 interface BookingHeaderProps {
   title: string;
@@ -20,6 +20,7 @@ export default function BookingHeader({
   scrollY,
   rightSlot,
 }: BookingHeaderProps) {
+  const styles = useThemedStyles(createStyles);
   const translateY = scrollY
     ? scrollY.interpolate({
         inputRange: [0, 120],

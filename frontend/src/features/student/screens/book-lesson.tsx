@@ -6,10 +6,12 @@ import { useAuthContext } from '@/features/auth/context/auth.context';
 import { createBooking } from '@/api/booking';
 import { enqueueBooking } from '@/services/booking-queue';
 import { Button, Input } from '@/components';
-import { styles } from '../styles/book-lesson.styles';
+import { styles as createStyles } from '../styles/book-lesson.styles';
+import { useThemedStyles } from '@/theme';
 import type { BookingPayload } from '@/types';
 
 export default function BookLessonScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const tutorId = Array.isArray(params.tutorId) ? params.tutorId[0] : (params.tutorId || '');
   const queuedIdParam = Array.isArray(params.queuedId) ? params.queuedId[0] : (params.queuedId || undefined);

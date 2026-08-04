@@ -8,13 +8,14 @@ import { AppText } from '@/components/ui/AppText';
 import { Badge } from '@/components/ui/Badge';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getTutorProfile, updateTutorProfileField } from '@/api/tutor';
-import { colors } from '@/theme';
-import { styles } from '../styles/availability.styles';
+import { colors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/availability.styles';
 import { StateRenderer } from '@/components/common';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export default function AvailabilityScreen() {
+  const styles = useThemedStyles(createStyles);
   const [isAvailable, setIsAvailable] = useState(true);
   const [selectedMode, setSelectedMode] = useState<'online' | 'physical' | 'both'>('both');
   const [loading, setLoading] = useState(false);

@@ -3,7 +3,7 @@ import { useApi } from '@/hooks/use-api';
 import { getTutorProfile } from '@/api/tutor';
 import { getTutorReviews } from '@/api/booking';
 import { useEffect } from 'react';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors, useThemedStyles } from '@/theme';
 import { ScrollView, View, RefreshControl, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,9 +15,11 @@ import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
-import { styles } from '../styles/tutor-detail.styles';
+import { styles as createStyles } from '../styles/tutor-detail.styles';
 
 export default function TutorDetailScreen() {
+  const styles = useThemedStyles(createStyles);
+  const colors = useColors();
   const params = useLocalSearchParams();
   const tutorId = Array.isArray(params.tutorId) ? params.tutorId[0] : params.tutorId;
 

@@ -10,8 +10,8 @@ import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { BaseCard } from '@/components/cards';
-import { colors } from '@/theme';
-import styles from '../styles/conversations.styles';
+import { colors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/conversations.styles';
 import type { Message } from '@/features/chat/types';
 import type { UserProfile } from '@/types';
 import { useApi } from '@/hooks/use-api';
@@ -26,6 +26,7 @@ interface ConversationItem {
 }
 
 export default function ConversationsScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

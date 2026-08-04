@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '@/theme';
+import { type ColorPalette } from '@/theme';
 
-const styles = StyleSheet.create({
+export const styles = (colors: ColorPalette) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F9FC',
+    backgroundColor: colors.background,
   },
   listContent: {
     padding: 16,
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E6EEF8',
+    borderColor: colors.border,
     marginBottom: 8,
   },
   form: {
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E6EEF8',
+    borderColor: colors.border,
     marginBottom: 12,
   },
   providerRow: {
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E6EEF8',
+    borderColor: colors.border,
     backgroundColor: colors.surface,
   },
   providerButtonActive: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E6EEF8',
+    borderColor: colors.border,
     padding: 12,
     borderRadius: 8,
     backgroundColor: colors.surface,

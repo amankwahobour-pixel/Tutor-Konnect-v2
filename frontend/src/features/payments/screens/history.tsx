@@ -4,10 +4,11 @@ import { router } from 'expo-router';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getPaymentsForUser } from '@/features/payments/api/payments.api';
 import { StateRenderer } from '@/components';
-import styles from '../styles/payments.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/payments.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function PaymentHistoryScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
   const [payments, setPayments] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(false);

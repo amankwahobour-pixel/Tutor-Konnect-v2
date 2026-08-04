@@ -8,10 +8,11 @@ import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Alert, Image, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/role-selection.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/role-selection.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function RoleSelectionScreen() {
+  const styles = useThemedStyles(createStyles);
   const [selectedRole, setSelectedRole] = useState<'student' | 'tutor' | 'parent' | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user, setUser } = useAuthContext();

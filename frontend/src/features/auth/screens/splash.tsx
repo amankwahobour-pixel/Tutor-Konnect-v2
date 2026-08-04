@@ -3,10 +3,11 @@ import AuthGuardCaller from '@/features/auth/guards/AuthGuard';
 import { Animated, Image, ImageBackground, View } from 'react-native';
 import { AppText } from '@/components/ui/AppText';
 import { BaseCard } from '@/components/cards';
-import { colors, spacing } from '@/theme';
-import styles from '../styles/splash.styles';
+import { spacing, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/splash.styles';
 
 export default function SplashScreen() {
+  const styles = useThemedStyles(createStyles);
   const dot1Ref = useRef(new Animated.Value(0));
   const dot2Ref = useRef(new Animated.Value(0));
   const dot3Ref = useRef(new Animated.Value(0));

@@ -3,10 +3,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, View, Text, Alert } from 'react-native';
 import { getPayment } from '@/features/payments/api/payments.api';
 import { StateRenderer, Button } from '@/components';
-import styles from '../styles/payments.styles';
+import { styles as createStyles } from '../styles/payments.styles';
+import { useThemedStyles } from '@/theme';
 import { useApi } from '@/hooks/use-api';
 
 export default function PaymentDetailsScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const paymentId = Array.isArray(params.paymentId) ? params.paymentId[0] : (params.paymentId || '');
 

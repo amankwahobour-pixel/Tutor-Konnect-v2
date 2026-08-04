@@ -5,8 +5,8 @@ import { router } from 'expo-router';
 import type { SharedValue } from 'react-native-reanimated';
 import { WaveHeader } from '@/components/headers';
 import { AppText } from '@/components/ui/AppText';
-import { colors } from '@/theme';
-import styles from './RequestsHeader.styles';
+import { colors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from './RequestsHeader.styles';
 
 interface RequestHeaderProps {
   title: string;
@@ -16,6 +16,7 @@ interface RequestHeaderProps {
 }
 
 export default function RequestsHeader({ title, subtitle, requestCount = 0, scrollY }: RequestHeaderProps) {
+  const styles = useThemedStyles(createStyles);
   return (
     <WaveHeader
       title={title}

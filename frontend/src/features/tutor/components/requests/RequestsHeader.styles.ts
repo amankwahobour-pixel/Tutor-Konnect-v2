@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, spacing } from '@/theme';
+import { radius, spacing, type ColorPalette } from '@/theme';
 
-export default StyleSheet.create({
+export const styles = (colors: ColorPalette) => StyleSheet.create({
   badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -23,3 +23,5 @@ export default StyleSheet.create({
     color: colors.text,
   },
 });
+
+export default styles;

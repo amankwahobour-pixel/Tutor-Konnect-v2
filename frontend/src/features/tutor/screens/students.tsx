@@ -7,7 +7,8 @@ import {
   View,
 } from 'react-native';
 import { pushPath, buildChatRoute } from '@/lib/navigation';
-import styles from '../styles/students.styles';
+import { styles as createStyles } from '../styles/students.styles';
+import { useThemedStyles } from '@/theme';
 import { getAllStudents } from '@/api/profile';
 import { StateRenderer } from '@/components';
 import type { UserProfile, ApiResponse } from '@/types';
@@ -19,6 +20,7 @@ interface StudentWithProgress extends UserProfile {
 }
 
 export default function StudentsScreen() {
+  const styles = useThemedStyles(createStyles);
   const [students, setStudents] = React.useState<StudentWithProgress[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);

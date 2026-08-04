@@ -10,12 +10,13 @@ import { StateRenderer } from '@/components/common';
 import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
-import { colors, spacing } from '@/theme';
+import { colors, spacing, useThemedStyles } from '@/theme';
 import BookingHeader from './components/BookingHeader';
-import styles from './booking.styles';
+import { styles as createStyles } from './booking.styles';
 import type { Booking } from '@/types';
 
 export default function BookingDetailsScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const bookingId = Array.isArray(params.bookingId) ? params.bookingId[0] : (params.bookingId || '');
   const { user } = useAuthContext();

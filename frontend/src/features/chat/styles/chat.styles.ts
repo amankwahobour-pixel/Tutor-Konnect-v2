@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { colors, radius, spacing } from '@/theme';
+import { radius, spacing, type ColorPalette } from '@/theme';
 
-const styles = StyleSheet.create({
+export const styles = (colors: ColorPalette) => StyleSheet.create({
   keyboardContainer: {
     flex: 1,
     backgroundColor: colors.background,

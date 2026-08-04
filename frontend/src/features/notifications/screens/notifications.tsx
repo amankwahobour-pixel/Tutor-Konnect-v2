@@ -9,8 +9,8 @@ import { StateRenderer } from '@/components/common';
 import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Badge } from '@/components/ui/Badge';
-import { colors } from '@/theme';
-import styles from '../styles/notifications.styles';
+import { colors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/notifications.styles';
 import { useApi } from '@/hooks/use-api';
 import { pushPath } from '@/lib/navigation';
 
@@ -19,6 +19,7 @@ function normalizeRoute(route: string) {
 }
 
 export default function NotificationsScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
   const [refreshing, setRefreshing] = React.useState(false);
 

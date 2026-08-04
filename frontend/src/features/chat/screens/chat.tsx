@@ -6,8 +6,8 @@ import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getConversationBetween, sendMessage, markMessagesRead } from '@/features/chat/api/messages.api';
 import { StateRenderer } from '@/components/common';
 import { AppText } from '@/components/ui/AppText';
-import { colors } from '@/theme';
-import styles from '../styles/chat.styles';
+import { colors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/chat.styles';
 import type { Message } from '@/features/chat/types';
 import { useApi } from '@/hooks/use-api';
 import { WaveHeader } from '@/components/headers';
@@ -15,9 +15,10 @@ import { WaveHeader } from '@/components/headers';
 interface MessageItemProps {
   message: Message;
   isOutgoing: boolean;
+  styles: ReturnType<typeof createStyles>;
 }
 
-const MessageItem = React.memo(({ message, isOutgoing }: MessageItemProps) => (
+const MessageItem = React.memo(({ message, isOutgoing, styles }: MessageItemProps) => (
   <View style={[styles.messageRow, isOutgoing ? styles.outgoingRow : styles.incomingRow]}>
     {!isOutgoing ? <View style={styles.incomingAvatar} /> : null}
     <View style={[styles.messageBubble, isOutgoing ? styles.outgoing : styles.incoming]}>
@@ -34,6 +35,7 @@ const MessageItem = React.memo(({ message, isOutgoing }: MessageItemProps) => (
 MessageItem.displayName = 'MessageItem';
 
 export default function ChatScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const otherId = Array.isArray(params.otherId) ? params.otherId[0] : (params.otherId || '');
   const { user } = useAuthContext();
@@ -88,7 +90,7 @@ export default function ChatScreen() {
   const renderMessage = useCallback(
     ({ item }: { item: Message }) => {
       const isOutgoing = item.sender_id === user?.id;
-      return <MessageItem message={item} isOutgoing={isOutgoing} />;
+      return <MessageItem message={item} isOutgoing={isOutgoing} styles={styles} />;
     },
     [user?.id],
   );

@@ -14,10 +14,12 @@ import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { SearchBar } from '@/components/forms';
-import { colors, spacing, useResponsive } from '@/theme';
-import { styles } from '../styles/dashboard.styles';
+import { spacing, useColors, useResponsive, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/dashboard.styles';
 
 export default function StudentDashboard() {
+  const styles = useThemedStyles(createStyles);
+  const colors = useColors();
   const { user } = useAuthContext();
   const { columns, isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState('');

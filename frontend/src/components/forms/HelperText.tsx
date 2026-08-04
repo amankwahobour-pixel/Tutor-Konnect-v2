@@ -9,20 +9,22 @@ export interface HelperTextProps extends Omit<TextProps, 'style'> {
   textStyle?: StyleProp<TextStyle>;
 }
 
-const variantColors: Record<NonNullable<HelperTextProps['variant']>, string> = {
-  error: colors.danger,
-  success: colors.success,
-  warning: colors.warning,
-  info: colors.textSecondary,
-};
+const HelperTextComponent = ({ text, variant = 'info', style, textStyle, ...props }: HelperTextProps) => {
+  const variantColors: Record<NonNullable<HelperTextProps['variant']>, string> = {
+    error: colors.danger,
+    success: colors.success,
+    warning: colors.warning,
+    info: colors.textSecondary,
+  };
 
-const HelperTextComponent = ({ text, variant = 'info', style, textStyle, ...props }: HelperTextProps) => (
-  <View style={style}>
-    <Text style={[{ color: variantColors[variant], fontSize: typography.caption, marginTop: spacing.xs }, textStyle]} {...props}>
-      {text}
-    </Text>
-  </View>
-);
+  return (
+    <View style={style}>
+      <Text style={[{ color: variantColors[variant], fontSize: typography.caption, marginTop: spacing.xs }, textStyle]} {...props}>
+        {text}
+      </Text>
+    </View>
+  );
+};
 
 export const HelperText = React.memo(HelperTextComponent);
 HelperText.displayName = 'HelperText';

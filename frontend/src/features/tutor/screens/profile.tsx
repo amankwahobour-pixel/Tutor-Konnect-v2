@@ -5,12 +5,14 @@ import { getTutorProfile } from '@/api/tutor';
 import { getTutorReviews } from '@/api/booking';
 import { Button, StateRenderer } from '@/components';
 import { Image, ScrollView, Text, View, RefreshControl } from 'react-native';
-import styles from '../styles/profile.styles';
+import { styles as createStyles } from '../styles/profile.styles';
+import { useThemedStyles } from '@/theme';
 import type { TutorProfile, Review } from '@/types';
 import { useApi } from '@/hooks/use-api';
 import { ReviewList } from '@/components/common/ReviewList';
 
 export default function TutorProfileScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
 
   const {

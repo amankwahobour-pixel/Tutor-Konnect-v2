@@ -11,12 +11,14 @@ import { PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { AppText } from '@/components/ui/AppText';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
-import { colors, spacing } from '@/theme';
-import { styles } from '../styles/my-lessons.styles';
+import { spacing, useColors, useThemedStyles } from '@/theme';
+import { styles as createStyles } from '../styles/my-lessons.styles';
 import BookingHeader from '@/features/bookings/components/BookingHeader';
 import type { Booking, QueuedBooking, ApiResponse } from '@/types';
 
 export default function MyLessonsScreen() {
+  const styles = useThemedStyles(createStyles);
+  const colors = useColors();
   const [lessons, setLessons] = React.useState<Booking[]>([]);
   const [queued, setQueued] = React.useState<QueuedBooking[]>([]);
   const [, setLoading] = React.useState(false);

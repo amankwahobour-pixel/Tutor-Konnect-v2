@@ -7,7 +7,8 @@ import {
     View,
 } from 'react-native';
 import { router } from 'expo-router';
-import styles from '../styles/earnings.styles';
+import { styles as createStyles } from '../styles/earnings.styles';
+import { useThemedStyles } from '@/theme';
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getTutorEarnings } from '@/api/tutor';
 import { StateRenderer } from '@/components';
@@ -54,6 +55,7 @@ const transactions: Transaction[] = [
 ];
 
 export default function EarningsScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
 
   const {

@@ -4,8 +4,8 @@ import { useAuthContext } from '@/features/auth/context/auth.context';
 import { StateRenderer, Button, Card } from '@/components';
 import { useApi } from '@/hooks/use-api';
 import { createTutorDocument, getTutorDocuments, deleteTutorDocument } from '../api/documents.api';
-import styles from '../styles/documents.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/documents.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 const DOCUMENT_TYPES = [
   { value: 'ghana_card_front', label: 'Ghana Card Front' },
@@ -16,6 +16,7 @@ const DOCUMENT_TYPES = [
 ];
 
 export default function DocumentsScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
   const [docType, setDocType] = React.useState(DOCUMENT_TYPES[0].value);
   const [fileUrl, setFileUrl] = React.useState('');

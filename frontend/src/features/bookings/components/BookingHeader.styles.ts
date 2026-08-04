@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { colors, spacing } from '@/theme';
+import { spacing, type ColorPalette } from '@/theme';
 
-export default StyleSheet.create({
+export const styles = (colors: ColorPalette) => StyleSheet.create({
   container: {
     paddingTop: 24,
     paddingBottom: 24,
@@ -61,3 +61,5 @@ export default StyleSheet.create({
     marginLeft: spacing.sm,
   },
 });
+
+export default styles;

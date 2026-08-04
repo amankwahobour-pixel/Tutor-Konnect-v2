@@ -3,8 +3,8 @@ import { View, Image, Text, TouchableOpacity, Alert, TextInput, FlatList } from 
 import { useAuthContext } from '@/features/auth/context/auth.context';
 import { getTutorEarnings } from '@/api/tutor';
 import { StateRenderer } from '@/components/common';
-import styles from '../styles/withdrawals.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/withdrawals.styles';
+import { colors, useThemedStyles } from '@/theme';
 import { createWithdrawal, getTutorWithdrawals } from '../api/withdrawals.api';
 
 const PROVIDERS = [
@@ -14,6 +14,7 @@ const PROVIDERS = [
 ];
 
 export default function WithdrawalsScreen() {
+  const styles = useThemedStyles(createStyles);
   const { user } = useAuthContext();
   const [earnings, setEarnings] = React.useState<any | null>(null);
   const [loading, setLoading] = React.useState(false);

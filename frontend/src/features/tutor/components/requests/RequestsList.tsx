@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 import { FlatList, View } from 'react-native';
 import type { TutorRequest } from '@/types';
 import RequestCard from './RequestCard';
-import styles from './RequestsList.styles';
+import { styles as createStyles } from './RequestsList.styles';
+import { useThemedStyles } from '@/theme';
 
 interface RequestListProps {
   requests: TutorRequest[];
@@ -11,6 +12,7 @@ interface RequestListProps {
 }
 
 export default function RequestsList({ requests, onAccept, onDecline }: RequestListProps) {
+  const styles = useThemedStyles(createStyles);
   const renderItem = useCallback(
     ({ item }: { item: TutorRequest }) => (
       <RequestCard request={item} onAccept={onAccept} onDecline={onDecline} />

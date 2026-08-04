@@ -1,6 +1,7 @@
 import { StyleSheet, TextStyle } from 'react-native';
+import { type ColorPalette } from '@/theme';
 
-const styles = StyleSheet.create({
+export const styles = (colors: ColorPalette) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F9FC',

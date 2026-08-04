@@ -7,10 +7,11 @@ import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Alert, Image, KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/sign-up.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/sign-up.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function SignUpScreen() {
+  const styles = useThemedStyles(createStyles);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

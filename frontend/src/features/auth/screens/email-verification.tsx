@@ -6,10 +6,11 @@ import { BaseCard } from '@/components/cards';
 import { AppText } from '@/components/ui/AppText';
 import { Alert, Animated, Image, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/email-verification.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/email-verification.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function EmailVerificationScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const email = Array.isArray(params.email) ? params.email[0] : params.email;
   const [sending, setSending] = useState(false);

@@ -8,10 +8,11 @@ import { AppText } from '@/components/ui/AppText';
 import { UserProfile } from '@/types';
 import { Alert, Image, KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../styles/sign-in.styles';
-import { colors } from '@/theme';
+import { styles as createStyles } from '../styles/sign-in.styles';
+import { colors, useThemedStyles } from '@/theme';
 
 export default function SigninScreen() {
+  const styles = useThemedStyles(createStyles);
   const [authMode, setAuthMode] = useState<'phone' | 'email'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');

@@ -3,9 +3,11 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { View, Text, TextInput, Alert } from 'react-native';
 import { createReview, getReviewByBooking, updateReview } from '@/api/booking';
 import { Button, StateRenderer } from '@/components';
-import styles from './booking.styles';
+import { styles as createStyles } from './booking.styles';
+import { useThemedStyles } from '@/theme';
 
 export default function BookingReviewScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const bookingId = Array.isArray(params.bookingId) ? params.bookingId[0] : (params.bookingId || '');
 

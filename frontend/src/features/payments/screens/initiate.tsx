@@ -3,10 +3,12 @@ import { View, Text, TextInput, Alert, TouchableOpacity, ScrollView } from 'reac
 import { useLocalSearchParams, router } from 'expo-router';
 import { initiatePayment, getPaymentsForBooking } from '@/features/payments/api/payments.api';
 import { StateRenderer, Button } from '@/components';
-import styles from '../styles/payments.styles';
+import { styles as createStyles } from '../styles/payments.styles';
+import { useThemedStyles } from '@/theme';
 import { useApi } from '@/hooks/use-api';
 
 export default function PaymentInitiateScreen() {
+  const styles = useThemedStyles(createStyles);
   const params = useLocalSearchParams();
   const bookingId = Array.isArray(params.bookingId) ? params.bookingId[0] : (params.bookingId || '');
   const amountParam = Array.isArray(params.amount) ? params.amount[0] : (params.amount || '');
